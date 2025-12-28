@@ -24,10 +24,10 @@ vector<tuple<int, int>> esGen(vector<tuple<string, int>> &inp)
 
 
     //debug print
-    for(int i=0 ; i<inp.size() ; i++)
-    {
-        cout<<i<<" - "<<get<0>(inp[i])<<" : "<<get<1>(inp[i])<<endl;
-    }
+    // for(int i=0 ; i<inp.size() ; i++)
+    // {
+    //     cout<<i<<" - "<<get<0>(inp[i])<<" : "<<get<1>(inp[i])<<endl;
+    // }
 
     int match = get<1>(inp[0]);
     get<0>(res[match]) = 0;
@@ -66,9 +66,9 @@ vector<tuple<int, int>> DBConversion(vector<tuple<string, int>> &inp){
     auto res1 = esGen(inp);
 
     //debug print
-    for(int i=0 ; i<res1.size() ; i++){
-        cout<<i<<" - "<<get<0>(res1[i])<<" : "<<get<1>(res1[i])<<endl;
-    }
+    // for(int i=0 ; i<res1.size() ; i++){
+    //     cout<<i<<" - "<<get<0>(res1[i])<<" : "<<get<1>(res1[i])<<endl;
+    // }
 
     for(int i=0 ; i<RANGE ; i++){
         res.emplace_back(get<0>(res1[i]), i);
