@@ -1,0 +1,27 @@
+
+> server@1.0.0 start
+> node src/index.js
+
+[dotenv@17.2.3] injecting env (5) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+[Cleanup] Session cleanup loop started (Interval: 60000ms)
+Server running on port 3000
+MongoDB Connected: localhost
+[0mPOST /api/login [32m200[0m 176.311 ms - 238[0m
+[0mDELETE /api/delete [33m404[0m 16.737 ms - 29[0m
+[0mPOST /api/new [32m201[0m 20.003 ms - 294[0m
+[0mPOST /api/save-index_value [32m200[0m 73.125 ms - 38[0m
+[0mDELETE /api/delete [33m404[0m 13.477 ms - 29[0m
+[0mPOST /api/new [32m201[0m 11.749 ms - 292[0m
+[0mPOST /api/save-index_value [32m200[0m 65.779 ms - 38[0m
+[0mDELETE /api/delete [33m404[0m 8.589 ms - 29[0m
+[0mPOST /api/new [32m201[0m 16.191 ms - 294[0m
+[0mPOST /api/upload_files?dbName=test_db_files [32m200[0m 29.497 ms - 40[0m
+[0mPOST /api/save-index_value [32m200[0m 69.404 ms - 38[0m
+[0mGET /api/get-files?dbName=test_db_files [32m200[0m 11.803 ms - 142[0m
+[0mGET /api/download-file?dbName=test_db_files&fileName=file1.txt [32m200[0m 10.120 ms - 55[0m
+[0mDELETE /api/delete [32m200[0m 10.434 ms - 49[0m
+[0mDELETE /api/delete [32m200[0m 13.897 ms - 49[0m
+[0mDELETE /api/delete [32m200[0m 15.047 ms - 49[0m
+[0mGET /api/get-files?dbName=test_db_files [33m404[0m 11.306 ms - 29[0m
+[0mPOST /api/logout [32m200[0m 12.615 ms - 37[0m
+[0mGET /api/get-files?dbName=test_db_files [33m401[0m 4.728 ms - 56[0m

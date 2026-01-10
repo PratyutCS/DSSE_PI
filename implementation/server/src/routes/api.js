@@ -5,7 +5,7 @@ const { protect } = require('../middlewares/authMiddleware');
 const { registerUser, loginUser, logoutUser } = require('../controllers/authController');
 const { createSpace, deleteSpace } = require('../controllers/spaceController');
 const { getIndexValue, saveIndexValue } = require('../controllers/indexController');
-const { upload, uploadFiles, getFiles } = require('../controllers/fileController');
+const { upload, uploadFiles, getFiles, downloadFile } = require('../controllers/fileController');
 
 // Auth Routes
 router.post('/register', registerUser); // Optional but helpful
@@ -23,5 +23,6 @@ router.post('/save-index_value', protect, saveIndexValue);
 // File Routes
 router.post('/upload_files', protect, upload.array('files'), uploadFiles);
 router.get('/get-files', protect, getFiles);
+router.get('/download-file', protect, downloadFile);
 
 module.exports = router;

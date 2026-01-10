@@ -81,4 +81,46 @@ const getFiles = async (req, res) => {
     }
 };
 
-module.exports = { upload, uploadFiles, getFiles };
+const downloadFile = async (req, res) => {
+    const { dbName, fileName } = req.query;
+    const user = req.user;
+
+    if (!dbName || !fileName) {
+        return res.status(400).json({ message: 'dbName and fileName are required' });
+    }
+
+    try {
+        const space = await DBSpace.findOne({ owner: user._id, dbName: dbName });
+        if (!space) {
+            return res.status(404).json({ message: 'Space not found' });
+        }
+
+        const filePath = path.join(space.path, fileName);
+
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        // Security check: ensure filePath is within space.path to prevent directory traversal
+        // (path.join handles normal '..' resolution but let's be safe if user input is malicious)
+        if (!filePath.startsWith(space.path)) {
+            return res.status(403).json({ message: 'Access denied' });
+        }
+
+        res.download(filePath, fileName, (err) => {
+            if (err) {
+                console.error('Download error:', err);
+                // Response might have partially sent, so checks are limited here
+                if (!res.headersSent) {
+                    res.status(500).json({ message: 'Error downloading file' });
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error downloading file' });
+    }
+};
+
+module.exports = { upload, uploadFiles, getFiles, downloadFile };

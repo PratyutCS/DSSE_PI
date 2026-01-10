@@ -46,17 +46,12 @@ This document provides a comprehensive guide to the **PI Server**, a secure Node
 
 ### 5.1 Architecture Overview
 
-The system consists of three main layers:
-1.  **Node.js Backend (Express)**: Handles HTTP requests, Authentication (JWT), File Management (Multer), and Database Space orchestration.
-2.  **MongoDB**: Stores User credentials (hashed), Session data (active JWTs), and Space metadata.
-3.  **C++ DSSE Engine (CLI)**: A standalone executable (`dsse_server`) that interfaces directly with **RocksDB**. It handles cryptographic operations (AES-128, SHA-256) and index management.
-
-#### Key Features
-*   **Multi-Database Support**: Users can create multiple isolated "Spaces", each with its own RocksDB index and file storage.
-*   **Encrypted Search**: Uses a DSSE (Dynamic Searchable Symmetric Encryption) scheme implemented in C++ with **Crypto++**.
-*   **Strict Security**: JWT-based authentication with explicit Logout (token invalidation) and auto-cleanup of expired sessions.
-
----
+The system uses a 3-tier architecture:
+1.  **API Layer (Node.js/Express)**: Handles RESTful requests, JWT authentication, and file streaming.
+2.  **Data Layer (MongoDB)**: Stores user credentials (hashed) and space metadata.
+3.  **Storage Engine (RocksDB + C++)**:
+    -   **Files**: Stored physically on disk under `storage/<user_id>/<db_name>`.
+    -   **Indexes**: Managed by a C++ binary (`dsse_server`) using RocksDB. It handles cryptographic operations (AES-128, SHA-256).
 
 ### 5.2 Prerequisites
 
@@ -67,8 +62,6 @@ Before running the server, ensure the following are installed:
     *   `librocksdb-dev` (RocksDB development headers/libs)
     *   `libcryptopp-dev` (Crypto++ development headers/libs)
     *   `build-essential` (g++, make, etc.)
-
----
 
 ### 5.3 Compilation (C++ Binaries)
 
@@ -82,12 +75,26 @@ npm run compile
 **What this does:**
 It invokes `g++` to compile `cpp/dsse_server.cpp`, linking against `librocksdb` and `libcryptopp`, generating the executable at `cpp/dsse_server`.
 
----
+### 5.4 CLI Management Tool (`manage_server.sh`)
 
-### 5.4 How to Start the Server
+We provide a comprehensive bash utility to manage the server lifecycle.
+
+**Usage:**
+```bash
+./manage_server.sh
+```
+
+**Features:**
+-   **Install Dependencies**: `npm install`.
+-   **Recompile C++**: Rebuilds the DSSE binary.
+-   **Clean Data**: Wipes all user data and logs (dev utility).
+-   **Run Tests**: Executes the verification suite.
+-   **Start Server**: Runs the server in the background with process control (Restart/Stop/View Logs).
+
+### 5.5 Manual Start & Deployment
 
 #### Development Mode
-To run the server locally:
+To run the server locally without the CLI tool:
 ```bash
 npm start
 ```
@@ -105,21 +112,51 @@ For production environments, ensure you:
 3.  Ensure MongoDB is secured (auth enabled) and update `MONGO_URI` accordingly.
 4.  Configure `STORAGE_ROOT` in `.env` to point to a persistent, backed-up volume.
 
----
+### 5.6 API Endpoints
 
-### 5.5 Testing & Verification
+All endpoints (except auth) require a valid JWT token in the `Authorization` header: `Bearer <token>`.
 
-We have provided a comprehensive **Verification Suite** that tests the entire lifecycle of the application.
+#### Authentication
+-   `POST /api/register` - Register a new user.
+-   `POST /api/login` - Login and receive JWT.
+-   `POST /api/logout` - Invalidate current session.
+
+#### Spaces (Databases)
+-   `POST /api/new` - Create a new isolated database space.
+    -   Body: `{ "dbName": "my_db" }`
+-   `DELETE /api/delete` - Delete a space and all its contents.
+    -   Body: `{ "dbName": "my_db" }`
+
+#### Index Operations (RocksDB)
+-   `POST /api/save-index_value` - Save/Update a key-value pair in the encrypted index.
+    -   Body: `{ "dbName": "...", "key": "...", "value": "..." }`
+-   `GET /api/get-index_value` - Search/Retrieve values. (Requires client-side token generation).
+
+#### File Operations
+-   `POST /api/upload_files` - Upload files to a space.
+    -   Query: `?dbName=...`
+    -   Body: `multipart/form-data` (field: `files`)
+-   `GET /api/get-files` - List filenames in a space.
+    -   Query: `?dbName=...`
+    -   Returns: `{ "files": ["file1.txt", ...] }`
+-   `GET /api/download-file` - **Secure Download**.
+    -   Query: `?dbName=...&fileName=...`
+    -   Streams the file content to the authenticated user.
+
+### 5.7 Testing & Verification
+
+Run the end-to-end test suite to verify system integrity.
 
 **Command:**
 ```bash
 node test/verify_suite.js
 ```
 
-**This script automatically tests:**
+**Scope:**
 1.  **Authentication**: Logs in as a static test user.
 2.  **Multi-Database Isolation**: Creates multiple databases (`alpha`, `beta`) and ensures data saved in one does not leak to the other.
 3.  **RocksDB Integration**: Performs cryptographic updates and searches using the C++ backend.
 4.  **File Operations**: Uploads files, lists them, and visualizes the folder hierarchy using a pause (to allow manual inspection).
-5.  **Clean Deletion**: Verifies that `DELETE` operations physically remove the folders from the disk.
-6.  **Logout Security**: Confirms that tokens are immediately invalidated after logout.
+5.  **Secure Download**: Verifies file integrity by downloading and comparing hashes.
+6.  **Clean Deletion**: Verifies that `DELETE` operations physically remove the folders from the disk.
+7.  **Logout Security**: Confirms that tokens are immediately invalidated after logout.
