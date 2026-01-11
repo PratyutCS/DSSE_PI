@@ -3,12 +3,9 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
-#include <random>
-#include <iomanip>
 #include <tuple>
 #include <algorithm>
 
-#include <cryptopp/osrng.h>
 #include <cryptopp/sha.h>
 #include <cryptopp/shake.h>
 #include <cryptopp/aes.h>
@@ -24,26 +21,12 @@ using namespace CryptoPP;
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Utilities %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void encryptAES(const SecByteBlock &key, const string &plaintext, string &ciphertext) {
-    ECB_Mode<AES>::Encryption encryptor;
-    encryptor.SetKey(key, key.size());
-    StringSource(plaintext, true, new StreamTransformationFilter(encryptor, new StringSink(ciphertext), BlockPaddingSchemeDef::NO_PADDING));
-}
-
 void decryptAES(const SecByteBlock &key, const string &ciphertext, string &plaintext) {
     ECB_Mode<AES>::Decryption decryptor;
     decryptor.SetKey(key, key.size());
     StringSource(ciphertext, true, new StreamTransformationFilter(decryptor, new StringSink(plaintext), BlockPaddingSchemeDef::NO_PADDING));
 }
 
-string SecByteBlockToString(const SecByteBlock& block) {
-    string result;
-    result.reserve(block.size());
-    for (size_t i = 0; i < block.size(); ++i) {
-        result.push_back(static_cast<unsigned char>(block[i]));
-    }
-    return result;
-}
 
 SecByteBlock StringToSecByteBlock(const string& str) {
     SecByteBlock block(reinterpret_cast<const unsigned char*>(str.data()), 16);

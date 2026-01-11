@@ -81,4 +81,16 @@ const deleteSpace = async (req, res) => {
     }
 };
 
-module.exports = { createSpace, deleteSpace };
+const getSpaces = async (req, res) => {
+    const user = req.user;
+    try {
+        const spaces = await DBSpace.find({ owner: user._id });
+        const spaceNames = spaces.map(s => s.dbName);
+        res.json({ spaces: spaceNames });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error fetching spaces' });
+    }
+};
+
+module.exports = { createSpace, deleteSpace, getSpaces };

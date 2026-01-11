@@ -3,7 +3,7 @@ const router = express.Router();
 const { protect } = require('../middlewares/authMiddleware');
 
 const { registerUser, loginUser, logoutUser } = require('../controllers/authController');
-const { createSpace, deleteSpace } = require('../controllers/spaceController');
+const { createSpace, deleteSpace, getSpaces } = require('../controllers/spaceController');
 const { getIndexValue, saveIndexValue } = require('../controllers/indexController');
 const { upload, uploadFiles, getFiles, downloadFile } = require('../controllers/fileController');
 
@@ -15,6 +15,7 @@ router.post('/logout', protect, logoutUser);
 // DB Space Routes
 router.post('/new', protect, createSpace);
 router.delete('/delete', protect, deleteSpace);
+router.get('/get-spaces', protect, getSpaces);
 
 // Index Routes (RocksDB)
 router.get('/get-index_value', protect, getIndexValue);

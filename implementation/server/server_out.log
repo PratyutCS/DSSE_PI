@@ -6,22 +6,53 @@
 [Cleanup] Session cleanup loop started (Interval: 60000ms)
 Server running on port 3000
 MongoDB Connected: localhost
-[0mPOST /api/login [32m200[0m 176.311 ms - 238[0m
-[0mDELETE /api/delete [33m404[0m 16.737 ms - 29[0m
-[0mPOST /api/new [32m201[0m 20.003 ms - 294[0m
-[0mPOST /api/save-index_value [32m200[0m 73.125 ms - 38[0m
-[0mDELETE /api/delete [33m404[0m 13.477 ms - 29[0m
-[0mPOST /api/new [32m201[0m 11.749 ms - 292[0m
-[0mPOST /api/save-index_value [32m200[0m 65.779 ms - 38[0m
-[0mDELETE /api/delete [33m404[0m 8.589 ms - 29[0m
-[0mPOST /api/new [32m201[0m 16.191 ms - 294[0m
-[0mPOST /api/upload_files?dbName=test_db_files [32m200[0m 29.497 ms - 40[0m
-[0mPOST /api/save-index_value [32m200[0m 69.404 ms - 38[0m
-[0mGET /api/get-files?dbName=test_db_files [32m200[0m 11.803 ms - 142[0m
-[0mGET /api/download-file?dbName=test_db_files&fileName=file1.txt [32m200[0m 10.120 ms - 55[0m
-[0mDELETE /api/delete [32m200[0m 10.434 ms - 49[0m
-[0mDELETE /api/delete [32m200[0m 13.897 ms - 49[0m
-[0mDELETE /api/delete [32m200[0m 15.047 ms - 49[0m
-[0mGET /api/get-files?dbName=test_db_files [33m404[0m 11.306 ms - 29[0m
-[0mPOST /api/logout [32m200[0m 12.615 ms - 37[0m
-[0mGET /api/get-files?dbName=test_db_files [33m401[0m 4.728 ms - 56[0m
+TypeError: Cannot destructure property 'username' of 'req.body' as it is undefined.
+    at loginUser (/home/pratyut/Desktop/pi/implementation/server/src/controllers/authController.js:43:13)
+    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
+    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:117:3)
+    at handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
+    at /home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:295:15
+    at processParams (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:582:12)
+    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:291:5)
+    at router.handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:186:3)
+[0mPOST /api/login [31m500[0m 5.246 ms - 99[0m
+TypeError: Cannot destructure property 'username' of 'req.body' as it is undefined.
+    at loginUser (/home/pratyut/Desktop/pi/implementation/server/src/controllers/authController.js:43:13)
+    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
+    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:117:3)
+    at handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
+    at /home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:295:15
+    at processParams (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:582:12)
+    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:291:5)
+    at router.handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:186:3)
+[0mPOST /api/login [31m500[0m 1.551 ms - 99[0m
+TypeError: Cannot destructure property 'username' of 'req.body' as it is undefined.
+    at loginUser (/home/pratyut/Desktop/pi/implementation/server/src/controllers/authController.js:43:13)
+    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
+    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:117:3)
+    at handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
+    at /home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:295:15
+    at processParams (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:582:12)
+    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:291:5)
+    at router.handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:186:3)
+[0mPOST /api/login [31m500[0m 1.120 ms - 99[0m
+[0mPOST /api/login [33m401[0m 29.151 ms - 42[0m
+TypeError: Cannot destructure property 'username' of 'req.body' as it is undefined.
+    at loginUser (/home/pratyut/Desktop/pi/implementation/server/src/controllers/authController.js:43:13)
+    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
+    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:117:3)
+    at handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
+    at /home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:295:15
+    at processParams (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:582:12)
+    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:291:5)
+    at router.handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:186:3)
+[0mPOST /api/login [31m500[0m 1.759 ms - 99[0m
+[0mPOST /api/login [32m200[0m 176.655 ms - 238[0m

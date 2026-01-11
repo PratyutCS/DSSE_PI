@@ -1,55 +1,55 @@
-[2026-01-10T17:34:25.087Z] --- Starting Merged Verification Suite ---
-[2026-01-10T17:34:25.090Z] 
+[2026-01-10T20:53:32.756Z] --- Starting Merged Verification Suite ---
+[2026-01-10T20:53:32.760Z] 
 [1] Logging in...
-[2026-01-10T17:34:25.360Z] Login Success. User ID: 69625e1c81b34095ec400974
-[2026-01-10T17:34:25.361Z] 
+[2026-01-10T20:53:32.996Z] Login Success. User ID: 69625e1c81b34095ec400974
+[2026-01-10T20:53:32.996Z] 
 [2] Starting Multi-Database Scenario (RocksDB Operations)...
-[2026-01-10T17:34:25.361Z] 
+[2026-01-10T20:53:32.996Z] 
   > [test_db_alpha] Operations:
-[2026-01-10T17:34:25.415Z]     Create Status: 201
-[2026-01-10T17:34:25.495Z]     Save (RocksDB) Status: 200
-[2026-01-10T17:34:25.496Z] 
+[2026-01-10T20:53:33.030Z]     Create Status: 201
+[2026-01-10T20:53:33.100Z]     Save (RocksDB) Status: 200
+[2026-01-10T20:53:33.100Z] 
   > [test_db_beta] Operations:
-[2026-01-10T17:34:25.531Z]     Create Status: 201
-[2026-01-10T17:34:25.602Z]     Save (RocksDB) Status: 200
-[2026-01-10T17:34:25.603Z] 
+[2026-01-10T20:53:33.127Z]     Create Status: 201
+[2026-01-10T20:53:33.195Z]     Save (RocksDB) Status: 200
+[2026-01-10T20:53:33.195Z] 
 [3] Starting File Upload Scenario (test_db_files)...
-[2026-01-10T17:34:25.637Z]   Space test_db_files created.
-[2026-01-10T17:34:25.637Z]   Uploading Files...
-[2026-01-10T17:34:25.678Z]   Upload Status: 200 (File uploaded successfully)
-[2026-01-10T17:34:25.678Z]   Testing Index Integration for Uploaded Files...
-[2026-01-10T17:34:25.679Z]     Saving Index: Key=file1.txt, Value=metadata_for_file1
-[2026-01-10T17:34:25.752Z]     Save Index Status: 200
-[2026-01-10T17:34:25.768Z]   Files Retrieved: ["000004.log","CURRENT","IDENTITY","LOCK","LOG","MANIFEST-000005","OPTIONS-000007","file1.txt","file2.txt"]
-[2026-01-10T17:34:25.769Z] 
+[2026-01-10T20:53:33.221Z]   Space test_db_files created.
+[2026-01-10T20:53:33.221Z]   Uploading Files...
+[2026-01-10T20:53:33.245Z]   Upload Status: 200 (File uploaded successfully)
+[2026-01-10T20:53:33.245Z]   Testing Index Integration for Uploaded Files...
+[2026-01-10T20:53:33.245Z]     Saving Index: Key=file1.txt, Value=metadata_for_file1
+[2026-01-10T20:53:33.307Z]     Save Index Status: 200
+[2026-01-10T20:53:33.315Z]   Files Retrieved: ["000004.log","CURRENT","IDENTITY","LOCK","LOG","MANIFEST-000005","OPTIONS-000007","file1.txt","file2.txt"]
+[2026-01-10T20:53:33.315Z] 
   [VERIFICATION] Checking filesystem storage for this user/db...
-[2026-01-10T17:34:25.769Z]   Target Path: /home/pratyut/Desktop/pi/implementation/server/storage/69625e1c81b34095ec400974/test_db_files
-[2026-01-10T17:34:25.782Z]   Command: ls -l <path>
-[2026-01-10T17:34:25.782Z]   Output:
+[2026-01-10T20:53:33.315Z]   Target Path: /home/pratyut/Desktop/pi/implementation/server/storage/69625e1c81b34095ec400974/test_db_files
+[2026-01-10T20:53:33.326Z]   Command: ls -l <path>
+[2026-01-10T20:53:33.327Z]   Output:
 total 56
--rw-r--r-- 1 pratyut pratyut    49 Jan 10 23:04 000004.log
--rw-r--r-- 1 pratyut pratyut    16 Jan 10 23:04 CURRENT
--rw-rw-r-- 1 pratyut pratyut    55 Jan 10 23:04 file1.txt
--rw-rw-r-- 1 pratyut pratyut    65 Jan 10 23:04 file2.txt
--rw-r--r-- 1 pratyut pratyut    36 Jan 10 23:04 IDENTITY
--rw-r--r-- 1 pratyut pratyut     0 Jan 10 23:04 LOCK
--rw-r--r-- 1 pratyut pratyut 22940 Jan 10 23:04 LOG
--rw-r--r-- 1 pratyut pratyut    70 Jan 10 23:04 MANIFEST-000005
--rw-r--r-- 1 pratyut pratyut  7251 Jan 10 23:04 OPTIONS-000007
+-rw-r--r-- 1 pratyut pratyut    49 Jan 11 02:23 000004.log
+-rw-r--r-- 1 pratyut pratyut    16 Jan 11 02:23 CURRENT
+-rw-rw-r-- 1 pratyut pratyut    55 Jan 11 02:23 file1.txt
+-rw-rw-r-- 1 pratyut pratyut    65 Jan 11 02:23 file2.txt
+-rw-r--r-- 1 pratyut pratyut    36 Jan 11 02:23 IDENTITY
+-rw-r--r-- 1 pratyut pratyut     0 Jan 11 02:23 LOCK
+-rw-r--r-- 1 pratyut pratyut 22940 Jan 11 02:23 LOG
+-rw-r--r-- 1 pratyut pratyut    70 Jan 11 02:23 MANIFEST-000005
+-rw-r--r-- 1 pratyut pratyut  7251 Jan 11 02:23 OPTIONS-000007
 
-[2026-01-10T17:34:25.782Z] 
+[2026-01-10T20:53:33.327Z] 
   [VERIFICATION] Testing Secure File Download...
-[2026-01-10T17:34:25.796Z]     Download Success: Saved to /home/pratyut/Desktop/pi/implementation/server/test/test_downloads/downloaded_file1.txt
-[2026-01-10T17:34:25.796Z]     SUCCESS: Downloaded file content matches original.
-[2026-01-10T17:34:25.803Z]     Local Download Dir Content:
+[2026-01-10T20:53:33.339Z]     Download Success: Saved to /home/pratyut/Desktop/pi/implementation/server/test/test_downloads/downloaded_file1.txt
+[2026-01-10T20:53:33.340Z]     SUCCESS: Downloaded file content matches original.
+[2026-01-10T20:53:33.347Z]     Local Download Dir Content:
 total 4
--rw-rw-r-- 1 pratyut pratyut 55 Jan 10 23:04 downloaded_file1.txt
+-rw-rw-r-- 1 pratyut pratyut 55 Jan 11 02:23 downloaded_file1.txt
 
-[2026-01-10T17:34:25.803Z] 
+[2026-01-10T20:53:33.347Z] 
 [4] Hierarchy Visualization & Deletion...
-[2026-01-10T17:34:25.804Z] 
+[2026-01-10T20:53:33.347Z] 
 --- STORAGE HIERARCHY (Before Deletion) ---
-[2026-01-10T17:34:25.810Z] storage:
+[2026-01-10T20:53:33.353Z] storage:
 69625e1c81b34095ec400974
 
 storage/69625e1c81b34095ec400974:
@@ -86,28 +86,28 @@ LOG
 MANIFEST-000005
 OPTIONS-000007
 
-[2026-01-10T17:34:25.810Z] -------------------------------------------
+[2026-01-10T20:53:33.354Z] -------------------------------------------
 
-[2026-01-10T17:34:25.810Z] Pausing for 3 seconds before deletion...
-[2026-01-10T17:34:28.810Z]   Deleting Space: test_db_alpha...
-[2026-01-10T17:34:28.824Z]     API Status: 200
-[2026-01-10T17:34:28.825Z]     SUCCESS: Folder storage/69625e1c81b34095ec400974/test_db_alpha was deleted.
-[2026-01-10T17:34:28.825Z]   Deleting Space: test_db_beta...
-[2026-01-10T17:34:28.847Z]     API Status: 200
-[2026-01-10T17:34:28.847Z]     SUCCESS: Folder storage/69625e1c81b34095ec400974/test_db_beta was deleted.
-[2026-01-10T17:34:28.847Z]   Deleting Space: test_db_files...
-[2026-01-10T17:34:28.871Z]     API Status: 200
-[2026-01-10T17:34:28.871Z]     SUCCESS: Folder storage/69625e1c81b34095ec400974/test_db_files was deleted.
-[2026-01-10T17:34:28.871Z] 
+[2026-01-10T20:53:33.354Z] Pausing for 3 seconds before deletion...
+[2026-01-10T20:53:36.354Z]   Deleting Space: test_db_alpha...
+[2026-01-10T20:53:36.366Z]     API Status: 200
+[2026-01-10T20:53:36.366Z]     SUCCESS: Folder storage/69625e1c81b34095ec400974/test_db_alpha was deleted.
+[2026-01-10T20:53:36.366Z]   Deleting Space: test_db_beta...
+[2026-01-10T20:53:36.386Z]     API Status: 200
+[2026-01-10T20:53:36.386Z]     SUCCESS: Folder storage/69625e1c81b34095ec400974/test_db_beta was deleted.
+[2026-01-10T20:53:36.386Z]   Deleting Space: test_db_files...
+[2026-01-10T20:53:36.399Z]     API Status: 200
+[2026-01-10T20:53:36.400Z]     SUCCESS: Folder storage/69625e1c81b34095ec400974/test_db_files was deleted.
+[2026-01-10T20:53:36.400Z] 
 --- STORAGE HIERARCHY (After Deletion) ---
-[2026-01-10T17:34:28.880Z] storage/69625e1c81b34095ec400974:
+[2026-01-10T20:53:36.409Z] storage/69625e1c81b34095ec400974:
 
-[2026-01-10T17:34:28.881Z] ------------------------------------------
+[2026-01-10T20:53:36.409Z] ------------------------------------------
 
-[2026-01-10T17:34:28.881Z] [5] Logout Verification...
-[2026-01-10T17:34:28.899Z]   Token Valid (Pre-Logout).
-[2026-01-10T17:34:28.918Z]   Logged Out.
-[2026-01-10T17:34:28.932Z]   SUCCESS: Access denied after logout (401).
-[2026-01-10T17:34:28.932Z] 
+[2026-01-10T20:53:36.409Z] [5] Logout Verification...
+[2026-01-10T20:53:36.419Z]   Token Valid (Pre-Logout).
+[2026-01-10T20:53:36.431Z]   Logged Out.
+[2026-01-10T20:53:36.440Z]   SUCCESS: Access denied after logout (401).
+[2026-01-10T20:53:36.441Z] 
 --- Full Merged Verification Suite Complete ---
-[2026-01-10T17:34:28.932Z] Log saved to: /home/pratyut/Desktop/pi/implementation/server/test/verify_suite.log
+[2026-01-10T20:53:36.441Z] Log saved to: /home/pratyut/Desktop/pi/implementation/server/test/verify_suite.log

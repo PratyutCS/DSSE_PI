@@ -1,36 +1,32 @@
 package com.example.pi;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
-import android.widget.TextView;
-
-import com.example.pi.databinding.ActivityMainBinding;
-
 public class MainActivity extends AppCompatActivity {
-
-    // Used to load the 'pi' library on application startup.
-    static {
-        System.loadLibrary("pi");
-    }
-
-    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Check for existing session
+        SharedPreferences prefs = getSharedPreferences("pi_prefs", MODE_PRIVATE);
+        String token = prefs.getString("auth_token", null);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        // Example of a call to a native method
-        TextView tv = binding.sampleText;
-        tv.setText(stringFromJNI());
+        if (token != null) {
+            // User is logged in, go to Home
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
+        } else {
+            // User not logged in, go to Login
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+        
+        // Finish MainActivity so user can't come back to it with Back button
+        finish();
     }
-
-    /**
-     * A native method that is implemented by the 'pi' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
 }
