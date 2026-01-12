@@ -2,57 +2,11 @@
 > server@1.0.0 start
 > node src/index.js
 
-[dotenv@17.2.3] injecting env (5) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+[dotenv@17.2.3] injecting env (5) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
 [Cleanup] Session cleanup loop started (Interval: 60000ms)
 Server running on port 3000
 MongoDB Connected: localhost
-TypeError: Cannot destructure property 'username' of 'req.body' as it is undefined.
-    at loginUser (/home/pratyut/Desktop/pi/implementation/server/src/controllers/authController.js:43:13)
-    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
-    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:117:3)
-    at handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
-    at /home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:295:15
-    at processParams (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:582:12)
-    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:291:5)
-    at router.handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:186:3)
-[0mPOST /api/login [31m500[0m 5.246 ms - 99[0m
-TypeError: Cannot destructure property 'username' of 'req.body' as it is undefined.
-    at loginUser (/home/pratyut/Desktop/pi/implementation/server/src/controllers/authController.js:43:13)
-    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
-    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:117:3)
-    at handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
-    at /home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:295:15
-    at processParams (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:582:12)
-    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:291:5)
-    at router.handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:186:3)
-[0mPOST /api/login [31m500[0m 1.551 ms - 99[0m
-TypeError: Cannot destructure property 'username' of 'req.body' as it is undefined.
-    at loginUser (/home/pratyut/Desktop/pi/implementation/server/src/controllers/authController.js:43:13)
-    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
-    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:117:3)
-    at handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
-    at /home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:295:15
-    at processParams (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:582:12)
-    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:291:5)
-    at router.handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:186:3)
-[0mPOST /api/login [31m500[0m 1.120 ms - 99[0m
-[0mPOST /api/login [33m401[0m 29.151 ms - 42[0m
-TypeError: Cannot destructure property 'username' of 'req.body' as it is undefined.
-    at loginUser (/home/pratyut/Desktop/pi/implementation/server/src/controllers/authController.js:43:13)
-    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
-    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/route.js:117:3)
-    at handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/lib/layer.js:152:17)
-    at /home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:295:15
-    at processParams (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:582:12)
-    at next (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:291:5)
-    at router.handle (/home/pratyut/Desktop/pi/implementation/server/node_modules/router/index.js:186:3)
-[0mPOST /api/login [31m500[0m 1.759 ms - 99[0m
-[0mPOST /api/login [32m200[0m 176.655 ms - 238[0m
+[0mPOST /api/login [33m401[0m 145.730 ms - 42[0m
+[0mPOST /api/login [32m200[0m 150.231 ms - 238[0m
+[0mGET /api/get-spaces [32m200[0m 13.099 ms - 95[0m
+[0mGET /api/get-spaces?uninitialized=true [32m200[0m 8.288 ms - 33[0m

@@ -83,8 +83,23 @@ const deleteSpace = async (req, res) => {
 
 const getSpaces = async (req, res) => {
     const user = req.user;
+    const { uninitialized } = req.query;
+
     try {
         const spaces = await DBSpace.find({ owner: user._id });
+
+        // If uninitialized filter is requested
+        if (uninitialized === 'true') {
+            const filteredSpaces = spaces.filter(space => {
+                if (fs.existsSync(space.path)) {
+                    const files = fs.readdirSync(space.path);
+                    return files.length === 0;
+                }
+                return true; // If directory doesn't exist yet, it's definitely uninitialized
+            });
+            return res.json({ spaces: filteredSpaces.map(s => s.dbName) });
+        }
+
         const spaceNames = spaces.map(s => s.dbName);
         res.json({ spaces: spaceNames });
     } catch (error) {

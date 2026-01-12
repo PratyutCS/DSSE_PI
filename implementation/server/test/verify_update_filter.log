@@ -1,0 +1,11 @@
+[2026-01-12T05:23:03.456Z] --- Starting Update Filter Verification ---
+[2026-01-12T05:23:03.463Z] [1] Logging in...
+[2026-01-12T05:23:03.744Z] [2] Creating space: filter_test_db_1768195383744
+[2026-01-12T05:23:03.770Z] [3] Verifying space appears in uninitialized list
+[2026-01-12T05:23:03.785Z]   SUCCESS: Space found in uninitialized list.
+[2026-01-12T05:23:03.785Z] [4] Uploading a dummy file to the space
+[2026-01-12T05:23:03.809Z]   Upload successful.
+[2026-01-12T05:23:03.810Z] [5] Verifying space is REMOVED from uninitialized list
+[2026-01-12T05:23:03.820Z]   SUCCESS: Space correctly filtered out.
+[2026-01-12T05:23:03.821Z] [6] Cleaning up...
+[2026-01-12T05:23:03.840Z] --- Verification Complete ---
