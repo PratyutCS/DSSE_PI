@@ -2,11 +2,19 @@
 > server@1.0.0 start
 > node src/index.js
 
-[dotenv@17.2.3] injecting env (5) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+[dotenv@17.2.3] injecting env (5) from .env -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
 [Cleanup] Session cleanup loop started (Interval: 60000ms)
 Server running on port 3000
 MongoDB Connected: localhost
-[0mPOST /api/login [33m401[0m 145.730 ms - 42[0m
-[0mPOST /api/login [32m200[0m 150.231 ms - 238[0m
-[0mGET /api/get-spaces [32m200[0m 13.099 ms - 95[0m
-[0mGET /api/get-spaces?uninitialized=true [32m200[0m 8.288 ms - 33[0m
+[0mPOST /api/login [32m200[0m 187.892 ms - 238[0m
+[0mGET /api/get-spaces?uninitialized=true [32m200[0m 25.459 ms - 33[0m
+[0mGET /api/get-spaces [32m200[0m 12.773 ms - 95[0m
+[0mGET /api/get-spaces [32m200[0m 9.145 ms - 95[0m
+[0mGET /api/get-spaces?uninitialized=true [32m200[0m 8.510 ms - 33[0m
+[0mGET /api/get-spaces?uninitialized=true [32m200[0m 10.211 ms - 33[0m
+[0mGET /api/get-spaces?uninitialized=true [32m200[0m 7.557 ms - 33[0m
+[0mGET /api/get-spaces?uninitialized=true [32m200[0m 13.258 ms - 33[0m
+[0mPOST /api/login [32m200[0m 121.524 ms - 238[0m
+[0mGET /api/get-spaces?uninitialized=true [32m200[0m 6.768 ms - 33[0m
+[0mGET /api/get-spaces?uninitialized=true [32m200[0m 8.052 ms - 33[0m
+[0mGET /api/get-spaces?uninitialized=true [32m200[0m 12.905 ms - 33[0m
