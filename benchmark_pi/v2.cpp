@@ -6,7 +6,7 @@
 
 using namespace std;
 
-static const int RANGE = 1000;
+static const int RANGE = 100;
 
 vector<tuple<int, int>> esGen(vector<tuple<string, int>> &inp)
 {
@@ -23,10 +23,10 @@ vector<tuple<int, int>> esGen(vector<tuple<string, int>> &inp)
     });
 
     // debug print
-    // for(int i=0 ; i<inp.size() ; i++)
-    // {
-    //     cout<<i<<" - "<<get<0>(inp[i])<<" : "<<get<1>(inp[i])<<endl;
-    // }
+    for(int i=0 ; i<inp.size() ; i++)
+    {
+        cout<<i<<" - "<<get<0>(inp[i])<<" : "<<get<1>(inp[i])<<endl;
+    }
 
     int match = get<1>(inp[0]);
     get<0>(res[match]) = 0;
@@ -40,34 +40,20 @@ vector<tuple<int, int>> esGen(vector<tuple<string, int>> &inp)
     }
     get<1>(res[match]) = i-1;
 
-    //debug print 
-
-    for(int i=0 ; i<RANGE ; i++){
-        cout<<i<<" - "<<get<0>(res[i])<<" : "<<get<1>(res[i])<<endl;
-    }
-
     bool flag = true;
     for(int i=1 ; i<RANGE ; i++){
-        if(get<0>(res[i]) == 0 && get<1>(res[i]) == -1){
-            if(flag){
-                get<0>(res[i]) = get<1>(res[i-1])+1;
-                flag = false;
-            }
-            else{
-                get<0>(res[i]) = get<0>(res[i-1]);
-            }
+        if(flag){
+            get<0>(res[i]) = get<1>(res[i-1])+1;
+            flag = false;
         }
         else{
-            flag = true;
+            if(get<0>(res[i]) == 0 && get<1>(res[i]) == -1){
+                get<0>(res[i]) = get<0>(res[i-1]);
+            }
+            else{
+                flag = true;
+            }
         }
-    }
-
-
-    //debug print
-    cout<<"\nafter post processing\n"<<endl;
-    
-    for(int i=0 ; i<RANGE ; i++){
-        cout<<i<<" - "<<get<0>(res[i])<<" : "<<get<1>(res[i])<<endl;
     }
     return res;
 }
