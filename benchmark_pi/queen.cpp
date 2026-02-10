@@ -10,7 +10,7 @@
 #include "./v2.cpp"
 #include "BitSequence.cpp"
 
-#define index_range 10
+#define index_range 100000
 
 using namespace std;
 
@@ -18,10 +18,10 @@ vector<tuple<string, int>> generate_random_input(int size) {
     vector<tuple<string, int>> inp;
     random_device rd;
     mt19937 rng(rd());
-    uniform_int_distribution<int> dist(0, 99);
+    uniform_int_distribution<int> dist(0, RANGE - 1);
 
     for (int i = 0; i < size; ++i) {
-        inp.push_back(make_tuple("ID" + to_string(i), dist(rng)));
+        inp.push_back(make_tuple("FILE" + to_string(i), dist(rng)));
     }
     shuffle(inp.begin(), inp.end(), rng);
     return inp;
@@ -131,12 +131,12 @@ int main(){
         BitSequence<uint64_t> param2_L_bitmap = less_than(index_range, stoull(search_result2[1]));
 
         // Final outputs
-        // cout << "lessthan 1: "; param1_L_bitmap.print_range(0, total_size);
-        // cout << "lessthan 2: "; param2_L_bitmap.print_range(0, total_size);
+        // cout << "lessthan 1: "; param1_L_bitmap.print_range(0, index_range);
+        // cout << "lessthan 2: "; param2_L_bitmap.print_range(0, index_range);
 
         // 1's Complement Demonstration
         BitSequence<uint64_t> param1_GE_bitmap = param1_L_bitmap.ones_complement();
-        // cout << "param1 complement: "; param1_GE_bitmap.print_range(0, total_size);
+        // cout << "param1 complement: "; param1_GE_bitmap.print_range(0, index_range);
 
         // Initialize with all zeros (n, 0) to ensure it exists even if 'equal' is not applicable
         BitSequence<uint64_t> param2_E_bitmap(index_range, 0); 
@@ -145,27 +145,29 @@ int main(){
         {
             // cout<<"equal to applicable for param2"<<endl;
             param2_E_bitmap = equal_bits(stoull(search_result2[1]), stoull(search_result2[0]), index_range);
-            // cout << "param2 equal bitmap is : "; param2_E_bitmap.print_range(0, total_size);
+            // cout << "param2 equal bitmap is : "; param2_E_bitmap.print_range(0, index_range);
         }
         
         // OR Operation: Combine LessThan and Equal to get LessThaSorted_Index_map3nEqual
         BitSequence<uint64_t> param2_LE_bitmap = param2_L_bitmap.bitwise_or(param2_E_bitmap);
-        // cout << "param2 LE (L | E) bitmap is : "; param2_LE_bitmap.print_range(0, total_size);
+        // cout << "param2 LE (L | E) bitmap is : "; param2_LE_bitmap.print_range(0, index_range);
 
         // AND Operation: Intersect param1 GE and param2 LE
         BitSequence<uint64_t> result_bitmap = param1_GE_bitmap.bitwise_and(param2_LE_bitmap);
-        cout << "result bitmap (GE & LE) is : "; result_bitmap.print_range(0, index_range);
-
-        cout<<"Final Matching IDs : ";
-
-        for (size_t j = 0; j < index_range; ++j) {
-            if (result_bitmap.get(j)) {
-                cout<<"ID"<<j<<" ";
-            }
-        }
-        cout<<endl;
 
         auto end_post = chrono::high_resolution_clock::now();
+
+        // cout << "result bitmap (GE & LE) is : "; result_bitmap.print_range(0, index_range);
+
+        // cout<<"Final Matching IDs : ";
+
+        // for (size_t j = 0; j < index_range; ++j) {
+        //     if (result_bitmap.get(j)) {
+        //         cout<<"ID"<<j<<" ";
+        //     }
+        // }
+        // cout<<endl;
+
         chrono::duration<double> elapsed_post = end_post - start_post;
         cout << "Post Processing took: " << elapsed_post.count() << " seconds" << endl;
 

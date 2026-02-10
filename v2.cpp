@@ -6,7 +6,7 @@
 
 using namespace std;
 
-static const int RANGE = 1000;
+static const int RANGE = 750000;
 
 vector<tuple<int, int>> esGen(vector<tuple<string, int>> &inp)
 {
@@ -42,9 +42,9 @@ vector<tuple<int, int>> esGen(vector<tuple<string, int>> &inp)
 
     //debug print 
 
-    for(int i=0 ; i<RANGE ; i++){
-        cout<<i<<" - "<<get<0>(res[i])<<" : "<<get<1>(res[i])<<endl;
-    }
+    // for(int i=0 ; i<RANGE ; i++){
+    //     cout<<i<<" - "<<get<0>(res[i])<<" : "<<get<1>(res[i])<<endl;
+    // }
 
     bool flag = true;
     for(int i=1 ; i<RANGE ; i++){
@@ -64,11 +64,13 @@ vector<tuple<int, int>> esGen(vector<tuple<string, int>> &inp)
 
 
     //debug print
-    cout<<"\nafter post processing\n"<<endl;
+
+    // cout<<"\nafter post processing\n"<<endl;
     
-    for(int i=0 ; i<RANGE ; i++){
-        cout<<i<<" - "<<get<0>(res[i])<<" : "<<get<1>(res[i])<<endl;
-    }
+    // for(int i=0 ; i<RANGE ; i++){
+    //     cout<<i<<" - "<<get<0>(res[i])<<" : "<<get<1>(res[i])<<endl;
+    // }
+
     return res;
 }
 

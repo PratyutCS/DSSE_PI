@@ -1,0 +1,242 @@
+[
+    {
+        "run": 1,
+        "input_index_range": 10000,
+        "setup_time_s": 0.071288,
+        "random_input_time_s": 0.00476546,
+        "db_conversion_time_s": 0.0102569,
+        "update_client_time_s": 0.911753,
+        "update_server_time_s": 0.126837,
+        "post_processing_time_s": 0.000022492,
+        "search": {
+            "param1": {
+                "value": 0,
+                "time_s": 0.000240613
+            },
+            "param2": {
+                "value": 9999,
+                "time_s": 0.000199912
+            }
+        },
+        "results": {
+            "client0": {
+                "param1": -1,
+                "param2": 9999
+            },
+            "client1": {
+                "param1": 0,
+                "param2": 9997
+            }
+        }
+    },
+    {
+        "run": 2,
+        "input_index_range": 50000,
+        "setup_time_s": 0.0782984,
+        "random_input_time_s": 0.0238506,
+        "db_conversion_time_s": 0.0600568,
+        "update_client_time_s": 4.5421,
+        "update_server_time_s": 0.748087,
+        "post_processing_time_s": 0.000097195,
+        "search": {
+            "param1": {
+                "value": 0,
+                "time_s": 0.000208883
+            },
+            "param2": {
+                "value": 49999,
+                "time_s": 0.00020303
+            }
+        },
+        "results": {
+            "client0": {
+                "param1": -1,
+                "param2": -1
+            },
+            "client1": {
+                "param1": 0,
+                "param2": 50000
+            }
+        }
+    },
+    {
+        "run": 3,
+        "input_index_range": 100000,
+        "setup_time_s": 0.0765466,
+        "random_input_time_s": 0.0418517,
+        "db_conversion_time_s": 0.1119,
+        "update_client_time_s": 8.83779,
+        "update_server_time_s": 1.51327,
+        "post_processing_time_s": 0.000194948,
+        "search": {
+            "param1": {
+                "value": 0,
+                "time_s": 0.000224342
+            },
+            "param2": {
+                "value": 99999,
+                "time_s": 0.000283833
+            }
+        },
+        "results": {
+            "client0": {
+                "param1": 1,
+                "param2": 99999
+            },
+            "client1": {
+                "param1": 0,
+                "param2": 99998
+            }
+        }
+    },
+    {
+        "run": 4,
+        "input_index_range": 500000,
+        "setup_time_s": 0.0763819,
+        "random_input_time_s": 0.230497,
+        "db_conversion_time_s": 0.606148,
+        "update_client_time_s": 45.6179,
+        "update_server_time_s": 8.59235,
+        "post_processing_time_s": 0.000462619,
+        "search": {
+            "param1": {
+                "value": 0,
+                "time_s": 0.000346708
+            },
+            "param2": {
+                "value": 499999,
+                "time_s": 0.000268881
+            }
+        },
+        "results": {
+            "client0": {
+                "param1": -1,
+                "param2": -1
+            },
+            "client1": {
+                "param1": 0,
+                "param2": 500000
+            }
+        }
+    },
+    {
+        "run": 5,
+        "input_index_range": 750000,
+        "setup_time_s": 0.0808368,
+        "random_input_time_s": 0.394979,
+        "db_conversion_time_s": 0.948005,
+        "update_client_time_s": 70.4638,
+        "update_server_time_s": 13.1635,
+        "post_processing_time_s": 0.00046746,
+        "search": {
+            "param1": {
+                "value": 0,
+                "time_s": 0.000385221
+            },
+            "param2": {
+                "value": 649999,
+                "time_s": 0.0003306
+            }
+        },
+        "results": {
+            "client0": {
+                "param1": -1,
+                "param2": -1
+            },
+            "client1": {
+                "param1": 0,
+                "param2": 649973
+            }
+        }
+    },
+    {
+        "run": 6,
+        "input_index_range": 1000000,
+        "setup_time_s": 0.0769587,
+        "random_input_time_s": 0.540833,
+        "db_conversion_time_s": 1.27786,
+        "update_client_time_s": 91.2919,
+        "update_server_time_s": 17.4629,
+        "post_processing_time_s": 0.000692544,
+        "search": {
+            "param1": {
+                "value": 0,
+                "time_s": 0.000403204
+            },
+            "param2": {
+                "value": 999999,
+                "time_s": 0.000233538
+            }
+        },
+        "results": {
+            "client0": {
+                "param1": 3,
+                "param2": 999999
+            },
+            "client1": {
+                "param1": 0,
+                "param2": 999998
+            }
+        }
+    },
+    {
+        "run": 7,
+        "input_index_range": 5000000,
+        "setup_time_s": 0.0752555,
+        "random_input_time_s": 3.73062,
+        "db_conversion_time_s": 6.93756,
+        "update_client_time_s": 469.209,
+        "update_server_time_s": 89.0729,
+        "post_processing_time_s": 0.00296933,
+        "search": {
+            "param1": {
+                "value": 0,
+                "time_s": 0.000469154
+            },
+            "param2": {
+                "value": 4999999,
+                "time_s": 0.000232747
+            }
+        },
+        "results": {
+            "client0": {
+                "param1": -1,
+                "param2": 4999999
+            },
+            "client1": {
+                "param1": 0,
+                "param2": 4999999
+            }
+        }
+    },
+    {
+        "run": 8,
+        "input_index_range": 10000000,
+        "setup_time_s": 0.0757282,
+        "random_input_time_s": 7.81354,
+        "db_conversion_time_s": 14.0929,
+        "update_client_time_s": 929.652,
+        "update_server_time_s": 176.678,
+        "post_processing_time_s": 0.00686882,
+        "search": {
+            "param1": {
+                "value": 0,
+                "time_s": 0.000457445
+            },
+            "param2": {
+                "value": 9999999,
+                "time_s": 0.000249744
+            }
+        },
+        "results": {
+            "client0": {
+                "param1": 0,
+                "param2": -1
+            },
+            "client1": {
+                "param1": 0,
+                "param2": 10000000
+            }
+        }
+    }
+]
