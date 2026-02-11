@@ -6,7 +6,9 @@
 
 using namespace std;
 
-static const int RANGE = 750000;
+#ifndef RANGE
+#define RANGE 10000
+#endif
 
 vector<tuple<int, int>> esGen(vector<tuple<string, int>> &inp)
 {

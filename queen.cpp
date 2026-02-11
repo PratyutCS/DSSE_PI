@@ -10,7 +10,9 @@
 #include "./v2.cpp"
 #include "BitSequence.cpp"
 
-#define index_range 750000
+#ifndef index_range
+#define index_range 10000
+#endif
 
 using namespace std;
 
@@ -70,6 +72,11 @@ int main(){
         FAST_.Update_client(ind, keyword, op, u_token);
         u_List.push_back(u_token);
     }
+
+    // if(u_List.size() == res.size()){
+    //     cout<<"size equal idea may work res.size() is:" << res.size() << " and u_List.size() is:" << u_List.size() << endl;
+    // }
+
     end = chrono::high_resolution_clock::now();
     elapsed = end - start;
     cout << "Update Client takes: " << elapsed.count() << " seconds" << endl;
@@ -86,6 +93,48 @@ int main(){
 
     cout << "============================= PI: Search LOOP =============================" << endl; 
     int choice = 1;
+#ifdef AUTOMATED_SEARCH
+    while (choice != 0) {
+        string param1 = "0";
+        string param2 = to_string(RANGE - 1);
+        vector<string> search_result1;
+        vector<string> search_result2;
+        tuple<string, string, int> s_token;
+        tuple<string, string, int> s_token2;
+
+        auto start_search = chrono::high_resolution_clock::now();
+        FAST_.Search_client(param1, s_token);
+        FAST_.Search_server(s_token, search_result1);
+        auto end_search = chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed_search1 = end_search - start_search;
+        cout << "Search 1 took: " << elapsed_search1.count() << " seconds" << endl;
+
+        start_search = chrono::high_resolution_clock::now();
+        FAST_.Search_client(param2, s_token2);
+        FAST_.Search_server(s_token2, search_result2);
+        end_search = chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed_search2 = end_search - start_search;
+        cout << "Search 2 took: " << elapsed_search2.count() << " seconds" << endl;
+
+        cout<<"============================= PI: Search ============================="<<endl;
+        for(int i=0 ; i<search_result1.size() ; i++) cout<<i<<" - "<<param1<<" : "<<search_result1[i]<<endl;
+        for(int i=0 ; i<search_result2.size() ; i++) cout<<i<<" - "<<param2<<" : "<<search_result2[i]<<endl;
+
+        cout<<"============================= PI: Post Processing ============================="<<endl;
+        auto start_post = chrono::high_resolution_clock::now();
+        BitSequence<uint64_t> param1_L_bitmap = less_than(index_range, stoull(search_result1[1]));
+        BitSequence<uint64_t> param2_L_bitmap = less_than(index_range, stoull(search_result2[1]));
+        BitSequence<uint64_t> param1_GE_bitmap = param1_L_bitmap.ones_complement();
+        BitSequence<uint64_t> param2_E_bitmap(index_range, 0); 
+        if(stoull(search_result2[0]) != -1) param2_E_bitmap = equal_bits(stoull(search_result2[1]), stoull(search_result2[0]), index_range);
+        BitSequence<uint64_t> param2_LE_bitmap = param2_L_bitmap.bitwise_or(param2_E_bitmap);
+        BitSequence<uint64_t> result_bitmap = param1_GE_bitmap.bitwise_and(param2_LE_bitmap);
+        auto end_post = chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed_post = end_post - start_post;
+        cout << "Post Processing took: " << elapsed_post.count() << " seconds" << endl;
+        choice = 0; 
+    }
+#else
     while (choice != 0) {
         vector<string> search_result1;
         cout<<"enter search param1"<<endl;
@@ -174,6 +223,7 @@ int main(){
         cout << "\nEnter 0 to exit or 1 to continue search: ";
         cin >> choice;
     }
+#endif
 
     return 0;
 }

@@ -39,7 +39,11 @@ function renderTable(data) {
             <td>${formatTime(row.update_client_time_s)}</td>
             <td>${formatTime(row.update_server_time_s)}</td>
             <td>${formatTime(row.post_processing_time_s)}</td>
-            <td>${formatSearch(row.search)}</td>
+            <td>
+                ${row.search && row.search.param1 && row.search.param2 ?
+                formatTime((row.search.param1.time_s + row.search.param2.time_s) / 2) :
+                '-'}
+            </td>
             <td>${formatResults(row.results)}</td>
         `;
 
@@ -59,6 +63,7 @@ function renderCharts(data) {
         { label: 'DB Conversion (s)', key: 'db_conversion_time_s', color: '#a855f7' },
         { label: 'Update Client (s)', key: 'update_client_time_s', color: '#ec4899' },
         { label: 'Update Server (s)', key: 'update_server_time_s', color: '#f43f5e' },
+        { label: 'Search Time (Avg s)', key: 'avg_search_time', color: '#f59e0b' },
         { label: 'Post Processing (s)', key: 'post_processing_time_s', color: '#10b981' }
     ];
 
@@ -84,7 +89,13 @@ function renderCharts(data) {
                 labels: labels,
                 datasets: [{
                     label: metric.label,
-                    data: sortedData.map(d => d[metric.key]),
+                    data: sortedData.map(d => {
+                        if (metric.key === 'avg_search_time') {
+                            return (d.search && d.search.param1 && d.search.param2) ?
+                                (d.search.param1.time_s + d.search.param2.time_s) / 2 : 0;
+                        }
+                        return d[metric.key];
+                    }),
                     borderColor: metric.color,
                     backgroundColor: metric.color + '22',
                     fill: true,

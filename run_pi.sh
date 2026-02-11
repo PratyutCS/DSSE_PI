@@ -1,4 +1,10 @@
-#!/bin/bash
+# Check for benchmark flag
+if [ "$1" == "--benchmark" ]; then
+    echo "Starting automated benchmark suite..."
+    python3 benchmark.py
+    rm -f queen_bench
+    exit 0
+fi
 
 # 1. Clean up existing RocksDB directories
 echo "Cleaning up database directories..."
