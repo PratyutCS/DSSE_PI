@@ -39,6 +39,7 @@ void DSSE::Search_server(const tuple<string, string, int> &s_token, vector<strin
 
     int c;
     c = get<2>(s_token);
+    // cout<<"keyword is: "<<t_keyword<<" and st_c is: "<<st_c<<" and c is: "<<c<<endl;
 
     for(int i = c; i > 0; --i)
     {  

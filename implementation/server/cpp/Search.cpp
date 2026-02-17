@@ -40,8 +40,6 @@ void DSSE::Search_server(const tuple<string, string, int> &s_token, vector<strin
     int c;
     c = get<2>(s_token);
 
-    cout << "DEBUG_C: " << get<2>(s_token) << endl;
-
     for(int i = c; i > 0; --i)
     {  
         string u, e;

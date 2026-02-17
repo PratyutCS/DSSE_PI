@@ -16,9 +16,17 @@ def export_json_to_csv():
     headers = [
         "Input Range",
         "Setup (s)",
+        "Generate Random Input (s)",
         "DB Conversion (s)",
-        "Post Processing (s)",
-        "Search Time (s)"
+        "Update Client (s)",
+        "Update Server (s)",
+        "Search 1 Client (s)",
+        "Search 1 Server (s)",
+        "Search 2 Client (s)",
+        "Search 2 Server (s)",
+        "C1 (Updates)",
+        "C2 (Updates)",
+        "Post Processing (s)"
     ]
 
     with open(OUTPUT_FILE, 'w', newline='') as f:
@@ -26,22 +34,20 @@ def export_json_to_csv():
         writer.writerow(headers)
 
         for entry in data:
-            # Calculate average search time
-            search = entry.get("search", {})
-            p1 = search.get("param1", {}).get("time_s", 0)
-            p2 = search.get("param2", {}).get("time_s", 0)
-            search_time_avg = (p1 + p2) / 2 if (p1 > 0 and p2 > 0) else 0
-            
-            # If avg_search_time_s was pre-calculated in benchmark.py, use it as fallback/check
-            if search_time_avg == 0 and "avg_search_time_s" in entry:
-                search_time_avg = entry["avg_search_time_s"]
-
             row = [
                 entry.get("input_index_range", 0),
                 entry.get("setup_time_s", 0),
+                entry.get("random_input_time_s", 0),
                 entry.get("db_conversion_time_s", 0),
-                entry.get("post_processing_time_s", 0),
-                search_time_avg
+                entry.get("update_client_time_s", 0),
+                entry.get("update_server_time_s", 0),
+                entry.get("search_1_client_s", 0),
+                entry.get("search_1_server_s", 0),
+                entry.get("search_2_client_s", 0),
+                entry.get("search_2_server_s", 0),
+                entry.get("c1", 0),
+                entry.get("c2", 0),
+                entry.get("post_processing_time_s", 0)
             ]
             writer.writerow(row)
 

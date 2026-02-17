@@ -5,7 +5,8 @@ import os
 
 # Configuration: Define the ranges to test
 # TEST_RANGES = [10000, 50000, 100000, 500000, 1000000, 5000000, 10000000]
-TEST_RANGES = [10, 25, 50, 75, 100, 250, 500, 750, 1000, 2500, 5000, 7500, 10000, 25000, 50000, 75000, 100000, 250000, 500000, 750000, 1000000, 2500000, 5000000, 7500000, 10000000 ]
+TEST_RANGES = [10, 25, 50, 75, 100, 250, 500, 750, 1000, 2500, 5000, 7500, 10000, 25000, 50000, 75000, 100000, 250000, 500000, 750000, 1000000 ]
+# TEST_RANGES = [10, 1000, 100000]
 DATA_FILE = "visual/data.json"
 
 def run_benchmark(range_val):
@@ -30,48 +31,99 @@ def run_benchmark(range_val):
         print(result.stderr)
         return None
 
-    # 3. Run
-    result = subprocess.run(["./queen_bench"], capture_output=True, text=True)
-    output = result.stdout
+    # 3. Run multiple iterations and average
+    NUM_RUNS = 3
+    metrics_sum = {
+        "setup_time_s": 0.0,
+        "random_input_time_s": 0.0,
+        "db_conversion_time_s": 0.0,
+        "update_client_time_s": 0.0,
+        "update_server_time_s": 0.0,
+        "search_1_client_s": 0.0,
+        "search_1_server_s": 0.0,
+        "search_2_client_s": 0.0,
+        "search_2_server_s": 0.0,
+        "post_processing_time_s": 0.0,
+        "c1": 0.0,
+        "c2": 0.0
+    }
     
-    # 4. Parse output
+    # Store results from the last run (assuming they are consistent)
+    last_results = {}
+
+    for i in range(NUM_RUNS):
+        # Clean up before each run
+        subprocess.run(["rm", "-rf", "Sigma_map1", "Server_map2"], check=True)
+        
+        # Execute
+        result = subprocess.run(["./queen_bench"], capture_output=True)
+        output = result.stdout.decode('utf-8', errors='replace')
+        
+        # Parse output for this run
+        patterns = {
+            "setup_time_s": r"Setup took: ([\d.eE+-]+) seconds",
+            "random_input_time_s": r"Generate Random Input took: ([\d.eE+-]+) seconds",
+            "db_conversion_time_s": r"DB Conversion took: ([\d.eE+-]+) seconds",
+            "update_client_time_s": r"Update Client takes: ([\d.eE+-]+) seconds",
+            "update_server_time_s": r"Update Server takes: ([\d.eE+-]+) seconds",
+            "post_processing_time_s": r"Post Processing took: ([\d.eE+-]+) seconds",
+        }
+
+        for key, pattern in patterns.items():
+            match = re.search(pattern, output)
+            if match:
+                metrics_sum[key] += float(match.group(1))
+
+        # Search params
+        s1_c_match = re.search(r"Search 1 Client took: ([\d.eE+-]+) seconds", output)
+        s1_s_match = re.search(r"Search 1 Server took: ([\d.eE+-]+) seconds", output)
+        s2_c_match = re.search(r"Search 2 Client took: ([\d.eE+-]+) seconds", output)
+        s2_s_match = re.search(r"Search 2 Server took: ([\d.eE+-]+) seconds", output)
+        
+        if s1_c_match: metrics_sum["search_1_client_s"] += float(s1_c_match.group(1))
+        if s1_s_match: metrics_sum["search_1_server_s"] += float(s1_s_match.group(1))
+        if s2_c_match: metrics_sum["search_2_client_s"] += float(s2_c_match.group(1))
+        if s2_s_match: metrics_sum["search_2_server_s"] += float(s2_s_match.group(1))
+        
+        # Parse debug C values (Indices: 0=warmup, 1=Search1, 2=Search2)
+        c_matches = re.findall(r"DEBUG_C: (\d+)", output)
+        if len(c_matches) >= 3:
+            metrics_sum["c1"] += float(c_matches[1])
+            metrics_sum["c2"] += float(c_matches[2])
+        elif len(c_matches) == 2: # fallback for safety
+            metrics_sum["c1"] += float(c_matches[0])
+            metrics_sum["c2"] += float(c_matches[1])
+
+        # Parse results (only need to keep one valid set)
+        res_patterns = re.findall(r"(\d+) - (\d+) : (-?\d+)", output)
+        if len(res_patterns) >= 4:
+            last_results["client0"] = {"param1": int(res_patterns[0][2]), "param2": int(res_patterns[2][2])}
+            last_results["client1"] = {"param1": int(res_patterns[1][2]), "param2": int(res_patterns[3][2])}
+
+    # 4. Average and Construct Data Object
     data = {
         "input_index_range": range_val,
-        "search": {},
-        "results": {}
+        "search": {}, # Structure kept for compatibility
+        "results": last_results
     }
     
-    # Regex patterns (supporting scientific notation like 2.3386e-05)
-    patterns = {
-        "setup_time_s": r"Setup took: ([\d.eE+-]+) seconds",
-        "random_input_time_s": r"Generate Random Input took: ([\d.eE+-]+) seconds",
-        "db_conversion_time_s": r"DB Conversion took: ([\d.eE+-]+) seconds",
-        "update_client_time_s": r"Update Client takes: ([\d.eE+-]+) seconds",
-        "update_server_time_s": r"Update Server takes: ([\d.eE+-]+) seconds",
-        "post_processing_time_s": r"Post Processing took: ([\d.eE+-]+) seconds",
+    # Calculate averages
+    for key, total_val in metrics_sum.items():
+        data[key] = total_val / NUM_RUNS
+
+    # populate nested search object for compatibility if needed
+    data["search"]["param1"] = {
+        "value": 0, 
+        "client_s": data["search_1_client_s"],
+        "server_s": data["search_1_server_s"],
+        "time_s": (data["search_1_client_s"] + data["search_1_server_s"]) # total time for back-compat view
     }
-
-    for key, pattern in patterns.items():
-        match = re.search(pattern, output)
-        if match:
-            data[key] = float(match.group(1))
-
-    # Search params (with scientific notation support)
-    s1_match = re.search(r"Search 1 took: ([\d.eE+-]+) seconds", output)
-    s2_match = re.search(r"Search 2 took: ([\d.eE+-]+) seconds", output)
-    if s1_match and s2_match:
-        data["avg_search_time_s"] = (float(s1_match.group(1)) + float(s2_match.group(1))) / 2
-    if s1_match: data["search"]["param1"] = {"value": 0, "time_s": float(s1_match.group(1))}
-    if s2_match: data["search"]["param2"] = {"value": range_val - 1, "time_s": float(s2_match.group(1))}
-
-    # Parse search results snippets
-    # Example: 0 - 0 : -1
-    res_patterns = re.findall(r"(\d+) - (\d+) : (-?\d+)", output)
-    # result1 (param1=0): first two matches
-    # result2 (param2=range-1): next two matches
-    if len(res_patterns) >= 4:
-        data["results"]["client0"] = {"param1": int(res_patterns[0][2]), "param2": int(res_patterns[2][2])}
-        data["results"]["client1"] = {"param1": int(res_patterns[1][2]), "param2": int(res_patterns[3][2])}
+    data["search"]["param2"] = {
+        "value": range_val - 1, 
+        "client_s": data["search_2_client_s"],
+        "server_s": data["search_2_server_s"],
+        "time_s": (data["search_2_client_s"] + data["search_2_server_s"])
+    }
 
     return data
 

@@ -38,13 +38,11 @@ function renderTable(data) {
             <td>${formatTime(row.db_conversion_time_s)}</td>
             <td>${formatTime(row.update_client_time_s)}</td>
             <td>${formatTime(row.update_server_time_s)}</td>
+            <td>${formatTime(row.search_1_client_s)}</td>
+            <td>${formatTime(row.search_1_server_s)}</td>
+            <td>${formatTime(row.search_2_client_s)}</td>
+            <td>${formatTime(row.search_2_server_s)}</td>
             <td>${formatTime(row.post_processing_time_s)}</td>
-            <td>
-                ${row.search && row.search.param1 && row.search.param2 ?
-                formatTime((row.search.param1.time_s + row.search.param2.time_s) / 2) :
-                '-'}
-            </td>
-            <td>${formatResults(row.results)}</td>
         `;
 
         tableBody.appendChild(tr);
@@ -60,14 +58,18 @@ function renderCharts(data) {
     // Metrics to plot
     const metrics = [
         { label: 'Setup Time (s)', key: 'setup_time_s', color: '#38bdf8' },
+        { label: 'Random Input (s)', key: 'random_input_time_s', color: '#fbbf24' },
         { label: 'DB Conversion (s)', key: 'db_conversion_time_s', color: '#a855f7' },
         { label: 'Update Client (s)', key: 'update_client_time_s', color: '#ec4899' },
         { label: 'Update Server (s)', key: 'update_server_time_s', color: '#f43f5e' },
-        { label: 'Search Time (Avg s)', key: 'avg_search_time', color: '#f59e0b' },
+        { label: 'Search 1 Client (s)', key: 'search_1_client_s', color: '#2dd4bf' },
+        { label: 'Search 1 Server (s)', key: 'search_1_server_s', color: '#22d3ee' },
+        { label: 'Search 2 Client (s)', key: 'search_2_client_s', color: '#a3e635' },
+        { label: 'Search 2 Server (s)', key: 'search_2_server_s', color: '#84cc16' },
         { label: 'Post Processing (s)', key: 'post_processing_time_s', color: '#10b981' }
     ];
 
-    // Sort data by run number for the charts
+    // Chart customization remains largely same...
     const sortedData = [...data].sort((a, b) => a.run - b.run);
     const labels = sortedData.map(d => `Run #${d.run} (${formatNumber(d.input_index_range)})`);
 
@@ -89,13 +91,7 @@ function renderCharts(data) {
                 labels: labels,
                 datasets: [{
                     label: metric.label,
-                    data: sortedData.map(d => {
-                        if (metric.key === 'avg_search_time') {
-                            return (d.search && d.search.param1 && d.search.param2) ?
-                                (d.search.param1.time_s + d.search.param2.time_s) / 2 : 0;
-                        }
-                        return d[metric.key];
-                    }),
+                    data: sortedData.map(d => d[metric.key] || 0),
                     borderColor: metric.color,
                     backgroundColor: metric.color + '22',
                     fill: true,
@@ -131,7 +127,10 @@ function formatNumber(num) {
 }
 
 function formatTime(seconds) {
-    return `<span style="font-feature-settings: 'tnum';">${seconds.toFixed(4)}s</span>`;
+    if (seconds === undefined || seconds === null) return '-';
+    // Use ms for consistency across all scales
+    const ms = seconds * 1000;
+    return `<span style="font-feature-settings: 'tnum';">${ms.toFixed(3)} ms</span>`;
 }
 
 function formatSearch(searchData) {

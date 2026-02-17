@@ -46,7 +46,7 @@ public class UpdateActivity extends AppCompatActivity {
         System.loadLibrary("pi");
     }
 
-    private native String processFiles(String[] filePaths, int[] keywords);
+    private native String[] generateTokens(String[] filePaths, int[] keywords);
 
     private Spinner spinnerSpaces;
     private Button btnPerformUpdate, btnAddFile;
@@ -124,34 +124,64 @@ public class UpdateActivity extends AppCompatActivity {
             return;
         }
 
+        String dbName = spinnerSpaces.getSelectedItem() != null ? spinnerSpaces.getSelectedItem().toString() : "";
+        if (dbName.isEmpty()) {
+            Toast.makeText(this, "Please select a space", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Validate keywords
         for (FileSelection fs : selectedFiles) {
-            if (fs.keyword < 0 || fs.keyword > 99) {
-                Toast.makeText(this, "Invalid keyword for " + fs.name + ". Must be 0-99", Toast.LENGTH_SHORT).show();
+            if (fs.keyword < 0 || fs.keyword > 100000) {
+                Toast.makeText(this, "Invalid keyword for " + fs.name + ". Must be 0-100000", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
 
         setUIEnabled(false);
-        Toast.makeText(this, "Updating database...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Generating tokens and updating database...", Toast.LENGTH_SHORT).show();
         
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String token = prefs.getString("auth_token", null);
+        String ip = prefs.getString("last_ip", "10.0.2.2");
+        String baseUrl = "http://" + ip + ":3000/api";
+
         executor.execute(() -> {
             try {
                 String[] paths = new String[selectedFiles.size()];
                 int[] keywords = new int[selectedFiles.size()];
+                List<String> filePathsList = new ArrayList<>();
                 
                 for (int i = 0; i < selectedFiles.size(); i++) {
                     File tempFile = copyUriToTempFile(selectedFiles.get(i).uri, selectedFiles.get(i).name);
                     paths[i] = tempFile.getAbsolutePath();
                     keywords[i] = selectedFiles.get(i).keyword;
+                    filePathsList.add(paths[i]);
                 }
                 
-                String nativeResult = processFiles(paths, keywords);
+                // 1. Generate Tokens via JNI
+                String[] tokens = generateTokens(paths, keywords);
+                
+                // 2. Send each token pair to server
+                if (tokens != null) {
+                    for (int i = 0; i < tokens.length; i += 2) {
+                        JSONObject body = new JSONObject();
+                        body.put("dbName", dbName);
+                        body.put("key", tokens[i]);     // u
+                        body.put("value", tokens[i+1]); // e
+                        NetworkUtils.performPostRequest(baseUrl + "/save-index_value", body.toString(), token);
+                    }
+                }
+                
+                // 3. Upload files to server
+                NetworkUtils.performMultipartRequest(baseUrl + "/upload_files", dbName, filePathsList, token);
                 
                 handler.post(() -> {
                     setUIEnabled(true);
+                    selectedFiles.clear();
+                    adapter.notifyDataSetChanged();
+                    checkUpdateState();
                     Toast.makeText(this, "Update complete!", Toast.LENGTH_LONG).show();
-                    Log.i("PI_UPDATE", nativeResult);
                 });
                 
             } catch (Exception e) {

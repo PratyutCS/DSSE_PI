@@ -101,20 +101,36 @@ int main(){
         vector<string> search_result2;
         tuple<string, string, int> s_token;
         tuple<string, string, int> s_token2;
+        tuple<string, string, int> s_token_warmup;
+        vector<string> warmup_result;
+
+        // Warmup Phase (to mitigate cold start for Search 1)
+        FAST_.Search_client(param1, s_token_warmup);
+        FAST_.Search_server(s_token_warmup, warmup_result);
 
         auto start_search = chrono::high_resolution_clock::now();
         FAST_.Search_client(param1, s_token);
-        FAST_.Search_server(s_token, search_result1);
         auto end_search = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_search1 = end_search - start_search;
-        cout << "Search 1 took: " << elapsed_search1.count() << " seconds" << endl;
+        chrono::duration<double> elapsed_search1_client = end_search - start_search;
+        cout << "Search 1 Client took: " << elapsed_search1_client.count() << " seconds" << endl;
+
+        start_search = chrono::high_resolution_clock::now();
+        FAST_.Search_server(s_token, search_result1);
+        end_search = chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed_search1_server = end_search - start_search;
+        cout << "Search 1 Server took: " << elapsed_search1_server.count() << " seconds" << endl;
 
         start_search = chrono::high_resolution_clock::now();
         FAST_.Search_client(param2, s_token2);
+        end_search = chrono::high_resolution_clock::now();
+        chrono::duration<double> elapsed_search2_client = end_search - start_search;
+        cout << "Search 2 Client took: " << elapsed_search2_client.count() << " seconds" << endl;
+
+        start_search = chrono::high_resolution_clock::now();
         FAST_.Search_server(s_token2, search_result2);
         end_search = chrono::high_resolution_clock::now();
-        chrono::duration<double> elapsed_search2 = end_search - start_search;
-        cout << "Search 2 took: " << elapsed_search2.count() << " seconds" << endl;
+        chrono::duration<double> elapsed_search2_server = end_search - start_search;
+        cout << "Search 2 Server took: " << elapsed_search2_server.count() << " seconds" << endl;
 
         cout<<"============================= PI: Search ============================="<<endl;
         for(int i=0 ; i<search_result1.size() ; i++) cout<<i<<" - "<<param1<<" : "<<search_result1[i]<<endl;
@@ -144,10 +160,15 @@ int main(){
         
         auto start_search = chrono::high_resolution_clock::now();
         FAST_.Search_client(param1, s_token);
-        FAST_.Search_server(s_token, search_result1);
         auto end_search = chrono::high_resolution_clock::now();
         chrono::duration<double> elapsed_search = end_search - start_search;
-        cout << "Search 1 took: " << elapsed_search.count() << " seconds" << endl;
+        cout << "Search 1 client took: " << elapsed_search.count() << " seconds" << endl;
+        
+        start_search = chrono::high_resolution_clock::now();
+        FAST_.Search_server(s_token, search_result1);
+        end_search = chrono::high_resolution_clock::now();
+        elapsed_search = end_search - start_search;
+        cout << "Search 1 server took: " << elapsed_search.count() << " seconds" << endl;
         
         vector<string> search_result2;
         cout<<"enter search param2"<<endl;
@@ -157,10 +178,15 @@ int main(){
         
         start_search = chrono::high_resolution_clock::now();
         FAST_.Search_client(param2, s_token2);
+        end_search = chrono::high_resolution_clock::now();
+        elapsed_search = end_search - start_search;
+        cout << "Search 2 client took: " << elapsed_search.count() << " seconds" << endl;
+        
+        start_search = chrono::high_resolution_clock::now();
         FAST_.Search_server(s_token2, search_result2);
         end_search = chrono::high_resolution_clock::now();
         elapsed_search = end_search - start_search;
-        cout << "Search 2 took: " << elapsed_search.count() << " seconds" << endl;
+        cout << "Search 2 server took: " << elapsed_search.count() << " seconds" << endl;
 
         cout<<"============================= PI: Search ============================="<<endl;
 
