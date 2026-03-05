@@ -19,8 +19,8 @@ public class NetworkUtils {
         conn.setRequestMethod(method);
         conn.setRequestProperty("Content-Type", "application/json");
         conn.setRequestProperty("Accept", "application/json");
-        conn.setConnectTimeout(5000);
-        conn.setReadTimeout(5000);
+        conn.setConnectTimeout(15000);
+        conn.setReadTimeout(120000);
 
         if (authToken != null) {
             conn.setRequestProperty("Authorization", "Bearer " + authToken);

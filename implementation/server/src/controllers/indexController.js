@@ -52,4 +52,25 @@ const saveIndexValue = async (req, res) => {
     }
 };
 
-module.exports = { getIndexValue, saveIndexValue };
+const bulkSaveIndexValue = async (req, res) => {
+    // mapped to Batch Update functionality
+    // Body: { dbName, pairs: [{key, value}, ...] }
+    const { dbName, pairs } = req.body;
+
+    if (!dbName || !pairs || !Array.isArray(pairs) || pairs.length === 0) {
+        return res.status(400).json({ message: 'Missing required parameters: dbName, pairs (array of {key, value})' });
+    }
+
+    try {
+        const dbPath = await getDbPath(req.user, dbName);
+
+        const result = await rocksdbService.bulkUpdateIndex(dbPath, pairs);
+        console.log(`[BulkUpdate] ${pairs.length} entries saved to ${dbName}: ${result}`);
+        res.json({ message: `Batch update successful: ${pairs.length} entries`, result });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message || 'Error in bulk update' });
+    }
+};
+
+module.exports = { getIndexValue, saveIndexValue, bulkSaveIndexValue };

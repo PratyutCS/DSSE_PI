@@ -8,9 +8,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    static {
+        System.loadLibrary("pi");
+    }
+
+    public native void initializeNative(String storagePath);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializeNative(getFilesDir().getAbsolutePath());
         
         // Check for existing session
         SharedPreferences prefs = getSharedPreferences("pi_prefs", MODE_PRIVATE);

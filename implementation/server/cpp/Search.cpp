@@ -48,6 +48,16 @@ void DSSE::Search_server(const tuple<string, string, int> &s_token, vector<strin
 
         rocksdb::Status status = this->Data.map2->Get(rocksdb::ReadOptions(), u, &e);                           // size of e is 32 byte
 
+        if (!status.ok()) {
+            cerr << "Key not found in map2 at iteration " << i << ": " << status.ToString() << endl;
+            break;  // No point continuing if key chain is broken
+        }
+
+        if (e.length() != 32) {
+            cerr << "Data corruption: Value length is " << e.length() << " but expected 32 at iteration " << i << endl;
+            break;
+        }
+
         string temp = hashSHAKE(t_keyword + st_c, 32);                                                          // as the size  = 32
         
         string ind_op_k_i = xorStrings(e, temp);

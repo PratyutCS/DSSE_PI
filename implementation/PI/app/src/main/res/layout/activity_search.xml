@@ -104,6 +104,37 @@
             android:layout_marginTop="32dp"
             android:textAllCaps="true"/>
 
+        <TextView
+            android:id="@+id/tvResultsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MATCHED RECORDS"
+            android:textColor="@color/luxury_gold"
+            android:textStyle="bold"
+            android:layout_marginTop="32dp"
+            android:visibility="gone"/>
+
+        <ScrollView
+            android:id="@+id/svResults"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card_luxury"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvResults"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/text_light"
+                android:textSize="14sp"
+                android:lineSpacingExtra="4dp"/>
+
+        </ScrollView>
+
     </LinearLayout>
 
 </LinearLayout>

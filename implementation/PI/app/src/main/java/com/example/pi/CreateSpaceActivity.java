@@ -60,7 +60,7 @@ public class CreateSpaceActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
-        String ip = prefs.getString("last_ip", "10.0.2.2");
+        String ip = prefs.getString("last_ip", BuildConfig.SERVER_IP);
 
         if (token == null) {
             finish();

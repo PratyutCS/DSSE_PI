@@ -11,6 +11,11 @@ cmake_minimum_required(VERSION 3.22.1)
 # build script scope).
 project("pi")
 
+# Set include directories for the native library.
+# The headers are placed in src/main/cpp/include by the build scripts.
+include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/include/cryptopp)
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
@@ -39,7 +44,11 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
 target_link_libraries(${CMAKE_PROJECT_NAME}
         # List libraries link to the target library
         android
-        log)
+        log
+        # Link statically built libraries
+        "${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/libcryptopp.a"
+        "${CMAKE_SOURCE_DIR}/libs/${ANDROID_ABI}/librocksdb.a"
+        )
 
 # Ensure 16 KB page size alignment for Android 15+ compatibility
 target_link_options(${CMAKE_PROJECT_NAME} PRIVATE "-Wl,-z,max-page-size=16384")

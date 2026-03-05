@@ -29,14 +29,14 @@ def generate_latex():
     \centering
     \scriptsize
     \rowcolors{2}{white}{lightgrey}
-    \begin{tabular}{| S[table-format=8.0] | S[table-format=1.4] | S[table-format=1.4] | S[table-format=2.4] | S[table-format=1.2e-1] | S[table-format=1.2e-1] | S[table-format=1.2e-1] | S[table-format=1.2e-1] | S[table-format=1.2e-1] |}
+    \begin{tabular}{| S[table-format=8.0] | S[table-format=1.4] | S[table-format=1.4] | S[table-format=1.4] | S[table-format=1.4] | S[table-format=1.4] |}
         \hline
         \rowcolor{lightgray!50}
-        {\textbf{Range}} & {\textbf{Setup (ms)}} & {\textbf{RndInp (ms)}} & {\textbf{DBConv (ms)}} & {\textbf{S1-Cli (ms)}} & {\textbf{S1-Svr (ms)}} & {\textbf{S2-Cli (ms)}} & {\textbf{S2-Svr (ms)}} & {\textbf{Post (ms)}} \\
+        {\textbf{DB size}} & {\textbf{DBConv (ms)}} & {\textbf{Setup (ms)}} & {\textbf{Avg Cli (ms)}} & {\textbf{Avg Svr (ms)}} & {\textbf{Post (ms)}} \\
         \hline
 """
     for row in rows:
-        range_val = row[0]
+        db_size = row[0]
         # Format values to ms with consistent precision
         def clean_val(x):
             try:
@@ -44,16 +44,13 @@ def generate_latex():
                 return "{:.3f}".format(v * 1000)
             except: return x
 
-        setup = clean_val(row[1])
-        rnd_inp = clean_val(row[2])
-        db = clean_val(row[3])
-        s1c = clean_val(row[6])
-        s1s = clean_val(row[7])
-        s2c = clean_val(row[8])
-        s2s = clean_val(row[9])
-        post = clean_val(row[12])
+        db_conv = clean_val(row[1])
+        setup = clean_val(row[2])
+        avg_cli = clean_val(row[3])
+        avg_svr = clean_val(row[4])
+        post = clean_val(row[5])
         
-        latex_content += fr"        {range_val} & {setup} & {rnd_inp} & {db} & {s1c} & {s1s} & {s2c} & {s2s} & {post} \\ \hline"
+        latex_content += fr"        {db_size} & {db_conv} & {setup} & {avg_cli} & {avg_svr} & {post} \\ \hline"
         latex_content += "\n"
 
     latex_content += r"""    \end{tabular}

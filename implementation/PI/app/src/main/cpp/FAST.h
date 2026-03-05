@@ -58,7 +58,6 @@ class DSSE
         {
             SecByteBlock client_sk;
             rocksdb::DB* map1;                                                                          // client-side map Sigma
-            rocksdb::DB* map2;                                                                          // server-side map T
         };
 
         SetupResult Data;
@@ -67,12 +66,17 @@ class DSSE
         DSSE()
         {
             cout << "DSSE FAST: Begins "<<endl;
-            secret_key = generateRandom128BitKey();                                                     // Initialising the secret key 
-
+            secret_key = generateRandom128BitKey(); 
+            this->Data.map1 = nullptr;
         }
         //Destructor function
         ~DSSE()  
         {
+            if (this->Data.map1) {
+                delete this->Data.map1;
+                this->Data.map1 = nullptr;
+            }
+            // map2 is already removed from Android FAST.h in previous step
             cout << "DSSE FAST: Ends " << endl;
         }
 
@@ -81,13 +85,11 @@ class DSSE
             return secret_key;
         }
 
-        void Setup();                                                                       // Declaration of function for Setup Algorithm
+        void Setup(const string &storage_path = "");                                                                       // Declaration of function for Setup Algorithm
 
         void Update_client(const string &ind, const string &keyword, const bool op, tuple<string, string> &u_token);     
-        void Update_server(const tuple<string, string> &u_token);
         
         void Search_client(const string &keyword, tuple<string, string, int> &s_token); // Declaration of function for Search protocol
-        void Search_server(const tuple<string, string, int> &s_token, vector<string> &search_result);
 };
 
 #endif 

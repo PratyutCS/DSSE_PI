@@ -41,13 +41,3 @@ void DSSE::Update_client(const string &ind, const string &keyword, const bool op
     get<1>(u_token) = xorStrings(temp2, hashSHAKE(temp1,32));                               // e
     
 }
-
-void DSSE::Update_server(const tuple<string, string> &u_token)
-{
-    // Server Side
-    rocksdb::Status status  = this->Data.map2->Put(rocksdb::WriteOptions(), get<0>(u_token), get<1>(u_token));
-    if(!status.ok())
-    {
-        std::cerr << "Error reading from RocksDB:" << status.ToString() << std::endl;
-    }   
-}

@@ -143,7 +143,7 @@ public class UpdateActivity extends AppCompatActivity {
         
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
-        String ip = prefs.getString("last_ip", "10.0.2.2");
+        String ip = prefs.getString("last_ip", BuildConfig.SERVER_IP);
         String baseUrl = "http://" + ip + ":3000/api";
 
         executor.execute(() -> {
@@ -160,21 +160,45 @@ public class UpdateActivity extends AppCompatActivity {
                 }
                 
                 // 1. Generate Tokens via JNI
+                System.out.println("[UPDATE PI] tokens generating");
                 String[] tokens = generateTokens(paths, keywords);
+                System.out.println("[UPDATE PI] tokens generated");
                 
-                // 2. Send each token pair to server
-                if (tokens != null) {
-                    for (int i = 0; i < tokens.length; i += 2) {
+                // 2. Send tokens in batches to server via bulk endpoint
+                System.out.println("[UPDATE PI] sending tokens to server");
+                if (tokens != null && tokens.length >= 2) {
+                    int BATCH_SIZE = 5000;
+                    int totalPairs = tokens.length / 2;
+                    Log.i("PI_UPDATE", "Total token pairs to send: " + totalPairs);
+                    
+                    for (int batchStart = 0; batchStart < totalPairs; batchStart += BATCH_SIZE) {
+                        int batchEnd = Math.min(batchStart + BATCH_SIZE, totalPairs);
+                        
+                        JSONArray pairsArray = new JSONArray();
+                        for (int j = batchStart; j < batchEnd; j++) {
+                            JSONObject pair = new JSONObject();
+                            pair.put("key", tokens[j * 2]);
+                            pair.put("value", tokens[j * 2 + 1]);
+                            pairsArray.put(pair);
+                        }
+                        
                         JSONObject body = new JSONObject();
                         body.put("dbName", dbName);
-                        body.put("key", tokens[i]);     // u
-                        body.put("value", tokens[i+1]); // e
-                        NetworkUtils.performPostRequest(baseUrl + "/save-index_value", body.toString(), token);
+                        body.put("pairs", pairsArray);
+                        
+                        Log.i("PI_UPDATE", "Sending batch " + (batchStart / BATCH_SIZE + 1) + 
+                                " (" + pairsArray.length() + " pairs)");
+                        NetworkUtils.performPostRequest(
+                                baseUrl + "/bulk-save-index_value", body.toString(), token);
                     }
+                    Log.i("PI_UPDATE", "All batches sent successfully");
                 }
+                System.out.println("[UPDATE PI] tokens sent to server");
                 
                 // 3. Upload files to server
+                System.out.println("[UPDATE PI] uploading files to server");
                 NetworkUtils.performMultipartRequest(baseUrl + "/upload_files", dbName, filePathsList, token);
+                System.out.println("[UPDATE PI] files uploaded to server");
                 
                 handler.post(() -> {
                     setUIEnabled(true);
@@ -344,7 +368,7 @@ public class UpdateActivity extends AppCompatActivity {
     private void fetchEmptySpaces() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
-        String ip = prefs.getString("last_ip", "10.0.2.2");
+        String ip = prefs.getString("last_ip", BuildConfig.SERVER_IP);
         String url = "http://" + ip + ":3000/api/get-spaces?uninitialized=true";
 
         if (token == null) {

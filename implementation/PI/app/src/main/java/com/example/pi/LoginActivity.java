@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Load last used IP
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String lastIp = prefs.getString(PREF_LAST_IP, "192.168.");
+        String lastIp = prefs.getString(PREF_LAST_IP, BuildConfig.SERVER_IP);
         etServerIp.setText(lastIp);
 
         btnLogin.setOnClickListener(v -> attemptLogin());

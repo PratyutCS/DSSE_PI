@@ -28,20 +28,15 @@ function renderTable(data) {
 
     data.forEach((row, index) => {
         const tr = document.createElement('tr');
-        tr.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s backwards`;
+        const avgClient = (row.search_1_client_s + row.search_2_client_s) / 2;
+        const avgServer = (row.search_1_server_s + row.search_2_server_s) / 2;
 
         tr.innerHTML = `
-            <td>#${row.run}</td>
             <td>${formatNumber(row.input_index_range)}</td>
-            <td>${formatTime(row.setup_time_s)}</td>
-            <td>${formatTime(row.random_input_time_s)}</td>
             <td>${formatTime(row.db_conversion_time_s)}</td>
-            <td>${formatTime(row.update_client_time_s)}</td>
-            <td>${formatTime(row.update_server_time_s)}</td>
-            <td>${formatTime(row.search_1_client_s)}</td>
-            <td>${formatTime(row.search_1_server_s)}</td>
-            <td>${formatTime(row.search_2_client_s)}</td>
-            <td>${formatTime(row.search_2_server_s)}</td>
+            <td>${formatTime(row.setup_time_s)}</td>
+            <td>${formatTime(avgClient)}</td>
+            <td>${formatTime(avgServer)}</td>
             <td>${formatTime(row.post_processing_time_s)}</td>
         `;
 
@@ -55,22 +50,24 @@ function renderCharts(data) {
     const container = document.getElementById('charts-container');
     container.innerHTML = '';
 
+    // Calculate averages for charts
+    const processedData = data.map(row => ({
+        ...row,
+        avg_client_search_time_s: (row.search_1_client_s + row.search_2_client_s) / 2,
+        avg_server_search_time_s: (row.search_1_server_s + row.search_2_server_s) / 2
+    }));
+
     // Metrics to plot
     const metrics = [
-        { label: 'Setup Time (s)', key: 'setup_time_s', color: '#38bdf8' },
-        { label: 'Random Input (s)', key: 'random_input_time_s', color: '#fbbf24' },
-        { label: 'DB Conversion (s)', key: 'db_conversion_time_s', color: '#a855f7' },
-        { label: 'Update Client (s)', key: 'update_client_time_s', color: '#ec4899' },
-        { label: 'Update Server (s)', key: 'update_server_time_s', color: '#f43f5e' },
-        { label: 'Search 1 Client (s)', key: 'search_1_client_s', color: '#2dd4bf' },
-        { label: 'Search 1 Server (s)', key: 'search_1_server_s', color: '#22d3ee' },
-        { label: 'Search 2 Client (s)', key: 'search_2_client_s', color: '#a3e635' },
-        { label: 'Search 2 Server (s)', key: 'search_2_server_s', color: '#84cc16' },
-        { label: 'Post Processing (s)', key: 'post_processing_time_s', color: '#10b981' }
+        { label: 'DB Conversion (ms)', key: 'db_conversion_time_s', color: '#a855f7' },
+        { label: 'Setup Time (ms)', key: 'setup_time_s', color: '#38bdf8' },
+        { label: 'Avg Client Search (ms)', key: 'avg_client_search_time_s', color: '#2dd4bf' },
+        { label: 'Avg Server Search (ms)', key: 'avg_server_search_time_s', color: '#22d3ee' },
+        { label: 'Post Processing (ms)', key: 'post_processing_time_s', color: '#10b981' }
     ];
 
     // Chart customization remains largely same...
-    const sortedData = [...data].sort((a, b) => a.run - b.run);
+    const sortedData = [...processedData].sort((a, b) => a.run - b.run);
     const labels = sortedData.map(d => `Run #${d.run} (${formatNumber(d.input_index_range)})`);
 
     metrics.forEach(metric => {
@@ -91,7 +88,10 @@ function renderCharts(data) {
                 labels: labels,
                 datasets: [{
                     label: metric.label,
-                    data: sortedData.map(d => d[metric.key] || 0),
+                    data: sortedData.map(d => {
+                        const val = (d[metric.key] || 0) * 1000;
+                        return val;
+                    }),
                     borderColor: metric.color,
                     backgroundColor: metric.color + '22',
                     fill: true,

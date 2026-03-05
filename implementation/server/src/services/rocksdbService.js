@@ -63,7 +63,45 @@ const searchIndex = async (dbPath, keywordToken, stateToken, count) => {
     return results;
 };
 
+const bulkUpdateIndex = async (dbPath, pairs) => {
+    // OpCode 2: Batch Update
+    // Feeds key\tvalue pairs via stdin to a single C++ process
+    return new Promise((resolve, reject) => {
+        const cmdArgs = [dbPath, '2'];
+        const proc = spawn(EXE_PATH, cmdArgs);
+
+        let stdoutData = '';
+        let stderrData = '';
+
+        proc.stdout.on('data', (data) => {
+            stdoutData += data.toString();
+        });
+
+        proc.stderr.on('data', (data) => {
+            stderrData += data.toString();
+        });
+
+        proc.on('close', (code) => {
+            if (code !== 0) {
+                return reject(new Error(`DSSE Batch Process exited with code ${code}: ${stderrData}`));
+            }
+            resolve(stdoutData.trim());
+        });
+
+        proc.on('error', (err) => {
+            reject(err);
+        });
+
+        // Write all pairs to stdin as tab-separated lines
+        for (const pair of pairs) {
+            proc.stdin.write(`${pair.key}\t${pair.value}\n`);
+        }
+        proc.stdin.end();
+    });
+};
+
 module.exports = {
     updateIndex,
-    searchIndex
+    searchIndex,
+    bulkUpdateIndex
 };

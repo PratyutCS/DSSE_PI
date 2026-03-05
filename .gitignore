@@ -1,0 +1,25 @@
+# Build artifacts
+build/
+.gradle/
+*.class
+*.o
+*.so
+*.a
+
+# Libraries
+implementation/PI/app/src/main/cpp/libs/
+
+# Server artifacts
+implementation/server/storage/
+implementation/server/cpp/dsse_server
+*.log
+
+# Android specific
+.idea/
+*.iml
+local.properties
+.DS_Store
+
+# Native build
+implementation/PI/app/.cxx/
+implementation/PI/app/build/

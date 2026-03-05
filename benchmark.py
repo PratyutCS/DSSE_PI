@@ -4,9 +4,9 @@ import json
 import os
 
 # Configuration: Define the ranges to test
-# TEST_RANGES = [10000, 50000, 100000, 500000, 1000000, 5000000, 10000000]
-TEST_RANGES = [10, 25, 50, 75, 100, 250, 500, 750, 1000, 2500, 5000, 7500, 10000, 25000, 50000, 75000, 100000, 250000, 500000, 750000, 1000000 ]
-# TEST_RANGES = [10, 1000, 100000]
+# Configuration: Define the ranges to test
+TEST_RANGES = [10000, 25000, 50000, 75000, 100000, 250000, 500000, 750000, 1000000]
+
 DATA_FILE = "visual/data.json"
 
 def run_benchmark(range_val):
@@ -32,7 +32,7 @@ def run_benchmark(range_val):
         return None
 
     # 3. Run multiple iterations and average
-    NUM_RUNS = 3
+    NUM_RUNS = 10
     metrics_sum = {
         "setup_time_s": 0.0,
         "random_input_time_s": 0.0,

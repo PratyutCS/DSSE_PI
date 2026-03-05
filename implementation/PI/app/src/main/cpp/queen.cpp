@@ -13,7 +13,7 @@
 using namespace std;
 
 // This function calculates the update tokens for the server
-vector<tuple<string, string>> queen_process(vector<tuple<string, int>> &inp) {
+vector<tuple<string, string>> queen_process(vector<tuple<string, int>> &inp, const string &storage_path) {
     LOGI("Queen redirecting to DBConversion. Input size: %zu", inp.size());
     
     // 1. Convert input to index/keyword pairs
@@ -23,7 +23,7 @@ vector<tuple<string, string>> queen_process(vector<tuple<string, int>> &inp) {
 
     // 2. Initialize DSSE to generate tokens
     DSSE FAST_;
-    FAST_.Setup(); // This might need local db setup, but for token gen we mainly need the keys
+    FAST_.Setup(storage_path); // Use the provided storage path
     
     vector<tuple<string, string>> u_List;
 
@@ -42,9 +42,9 @@ vector<tuple<string, string>> queen_process(vector<tuple<string, int>> &inp) {
 }
 
 // This function generates the search token (t_keyword, st_c, c)
-tuple<string, string, int> queen_search_client(string keyword) {
+tuple<string, string, int> queen_search_client(string keyword, const string &storage_path) {
     DSSE FAST_;
-    FAST_.Setup(); // Initialize as well. In real app, keys should be persistent.
+    FAST_.Setup(storage_path); // Initialize as well.
     
     tuple<string, string, int> s_token;
     FAST_.Search_client(keyword, s_token);

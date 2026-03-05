@@ -6,7 +6,10 @@ const createSpace = async (req, res) => {
     const { dbName } = req.body;
     const user = req.user;
 
+    console.log(`[CreateSpace] Request body: ${JSON.stringify(req.body)}`);
+
     if (!dbName) {
+        console.warn(`[CreateSpace] Missing dbName`);
         return res.status(400).json({ message: 'dbName is required' });
     }
 
@@ -14,6 +17,7 @@ const createSpace = async (req, res) => {
         // Check for duplicate in DB
         const existingSpace = await DBSpace.findOne({ owner: user._id, dbName: dbName });
         if (existingSpace) {
+            console.warn(`[CreateSpace] Space already exists: ${dbName}`);
             return res.status(400).json({ message: 'Space with this name already exists' });
         }
 

@@ -14,19 +14,12 @@ def export_json_to_csv():
         data = json.load(f)
 
     headers = [
-        "Input Range",
-        "Setup (s)",
-        "Generate Random Input (s)",
-        "DB Conversion (s)",
-        "Update Client (s)",
-        "Update Server (s)",
-        "Search 1 Client (s)",
-        "Search 1 Server (s)",
-        "Search 2 Client (s)",
-        "Search 2 Server (s)",
-        "C1 (Updates)",
-        "C2 (Updates)",
-        "Post Processing (s)"
+        "DB size",
+        "DBConv",
+        "Setup",
+        "Avg Client search time (s)",
+        "Avg Server search time (s)",
+        "Post processing"
     ]
 
     with open(OUTPUT_FILE, 'w', newline='') as f:
@@ -34,19 +27,15 @@ def export_json_to_csv():
         writer.writerow(headers)
 
         for entry in data:
+            avg_client = (entry.get("search_1_client_s", 0) + entry.get("search_2_client_s", 0)) / 2
+            avg_server = (entry.get("search_1_server_s", 0) + entry.get("search_2_server_s", 0)) / 2
+            
             row = [
                 entry.get("input_index_range", 0),
-                entry.get("setup_time_s", 0),
-                entry.get("random_input_time_s", 0),
                 entry.get("db_conversion_time_s", 0),
-                entry.get("update_client_time_s", 0),
-                entry.get("update_server_time_s", 0),
-                entry.get("search_1_client_s", 0),
-                entry.get("search_1_server_s", 0),
-                entry.get("search_2_client_s", 0),
-                entry.get("search_2_server_s", 0),
-                entry.get("c1", 0),
-                entry.get("c2", 0),
+                entry.get("setup_time_s", 0),
+                avg_client,
+                avg_server,
                 entry.get("post_processing_time_s", 0)
             ]
             writer.writerow(row)

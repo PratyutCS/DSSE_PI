@@ -42,6 +42,9 @@ public class SearchActivity extends AppCompatActivity {
     private Button btnConnect;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
+    
+    private TextView tvResultsTitle, tvResults;
+    private View svResults;
 
     private static final String PREFS_NAME = "pi_prefs";
 
@@ -57,6 +60,10 @@ public class SearchActivity extends AppCompatActivity {
         
         TextView toolbarTitle = findViewById(R.id.toolbarTitle);
         toolbarTitle.setText("PRIVATE SEARCH");
+
+        tvResultsTitle = findViewById(R.id.tvResultsTitle);
+        tvResults = findViewById(R.id.tvResults);
+        svResults = findViewById(R.id.svResults);
         
         View btnBack = findViewById(R.id.btnBack);
         btnBack.setVisibility(View.VISIBLE);
@@ -90,7 +97,7 @@ public class SearchActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
-        String ip = prefs.getString("last_ip", "10.0.2.2");
+        String ip = prefs.getString("last_ip", BuildConfig.SERVER_IP);
         String baseUrl = "http://" + ip + ":3000/api/get-index_value";
 
         Toast.makeText(this, "Searching...", Toast.LENGTH_SHORT).show();
@@ -98,16 +105,26 @@ public class SearchActivity extends AppCompatActivity {
         executor.execute(() -> {
             try {
                 // 1. Get tokens for param 1
+                Log.i("PI_SEARCH", "Generating token for P1: " + p1);
                 String[] tokens1 = getSearchToken(p1);
+                Log.i("PI_SEARCH", "P1 Tokens: u=" + tokens1[0] + ", count=" + tokens1[2]);
+                
                 String url1 = baseUrl + "?dbName=" + dbName + "&keyword_token=" + Uri.encode(tokens1[0]) + "&state_token=" + Uri.encode(tokens1[1]) + "&count=" + tokens1[2];
+                Log.i("PI_SEARCH", "Requesting P1 from server: " + url1);
                 String response1 = NetworkUtils.performGetRequest(url1, token);
                 JSONArray res1 = new JSONObject(response1).getJSONArray("results");
+                Log.i("PI_SEARCH", "P1 Results received: " + res1.length());
 
                 // 2. Get tokens for param 2
+                Log.i("PI_SEARCH", "Generating token for P2: " + p2);
                 String[] tokens2 = getSearchToken(p2);
+                Log.i("PI_SEARCH", "P2 Tokens: u=" + tokens2[0] + ", count=" + tokens2[2]);
+                
                 String url2 = baseUrl + "?dbName=" + dbName + "&keyword_token=" + Uri.encode(tokens2[0]) + "&state_token=" + Uri.encode(tokens2[1]) + "&count=" + tokens2[2];
+                Log.i("PI_SEARCH", "Requesting P2 from server: " + url2);
                 String response2 = NetworkUtils.performGetRequest(url2, token);
                 JSONArray res2 = new JSONObject(response2).getJSONArray("results");
+                Log.i("PI_SEARCH", "P2 Results received: " + res2.length());
 
                 // 3. Post Process
                 // resX is a list of results. In the benchmark queen.cpp, search_result1[1] and [0] were used.
@@ -122,9 +139,27 @@ public class SearchActivity extends AppCompatActivity {
                 handler.post(() -> {
                     if (ids.length == 0) {
                         Toast.makeText(this, "No matching records found.", Toast.LENGTH_LONG).show();
+                        tvResultsTitle.setVisibility(View.GONE);
+                        svResults.setVisibility(View.GONE);
                     } else {
                         Toast.makeText(this, "Found " + ids.length + " matching IDs!", Toast.LENGTH_LONG).show();
-                        Log.i("PI_SEARCH", "Found IDs: " + java.util.Arrays.toString(ids));
+                        
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = 0; i < ids.length; i++) {
+                            sb.append("ID").append(ids[i]);
+                            if (i < ids.length - 1) {
+                                sb.append(", ");
+                            }
+                            if ((i + 1) % 5 == 0) {
+                                sb.append("\n");
+                            }
+                        }
+                        
+                        tvResults.setText(sb.toString());
+                        tvResultsTitle.setVisibility(View.VISIBLE);
+                        svResults.setVisibility(View.VISIBLE);
+                        
+                        Log.i("PI_SEARCH", "Found IDs: " + sb.toString());
                     }
                 });
 
@@ -137,7 +172,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void fetchSpaces(String token) {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String ip = prefs.getString("last_ip", "10.0.2.2");
+        String ip = prefs.getString("last_ip", BuildConfig.SERVER_IP);
         String url = "http://" + ip + ":3000/api/get-spaces";
 
         executor.execute(() -> {

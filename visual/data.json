@@ -1,498 +1,18 @@
 [
     {
-        "input_index_range": 10,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 2.9400000000000002e-06,
-                "server_s": 9.380666666666666e-06,
-                "time_s": 1.2320666666666667e-05
-            },
-            "param2": {
-                "value": 9,
-                "client_s": 3.245666666666667e-06,
-                "server_s": 9.929333333333332e-06,
-                "time_s": 1.3174999999999998e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": 0,
-                "param2": -1
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 10
-            }
-        },
-        "setup_time_s": 0.05396206666666667,
-        "random_input_time_s": 2.1785666666666667e-05,
-        "db_conversion_time_s": 8.534e-06,
-        "update_client_time_s": 0.000649818,
-        "update_server_time_s": 0.00014249433333333333,
-        "search_1_client_s": 2.9400000000000002e-06,
-        "search_1_server_s": 9.380666666666666e-06,
-        "search_2_client_s": 3.245666666666667e-06,
-        "search_2_server_s": 9.929333333333332e-06,
-        "post_processing_time_s": 3.852666666666667e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 1
-    },
-    {
-        "input_index_range": 25,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 3.7159999999999997e-06,
-                "server_s": 1.1508666666666667e-05,
-                "time_s": 1.5224666666666667e-05
-            },
-            "param2": {
-                "value": 24,
-                "client_s": 4.139666666666666e-06,
-                "server_s": 1.1457333333333335e-05,
-                "time_s": 1.5597e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": 0,
-                "param2": 24
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 24
-            }
-        },
-        "setup_time_s": 0.05612929999999999,
-        "random_input_time_s": 3.2990333333333335e-05,
-        "db_conversion_time_s": 1.4767666666666666e-05,
-        "update_client_time_s": 0.0017974366666666667,
-        "update_server_time_s": 0.00027886766666666667,
-        "search_1_client_s": 3.7159999999999997e-06,
-        "search_1_server_s": 1.1508666666666667e-05,
-        "search_2_client_s": 4.139666666666666e-06,
-        "search_2_server_s": 1.1457333333333335e-05,
-        "post_processing_time_s": 6.010000000000001e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 2
-    },
-    {
-        "input_index_range": 50,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 2.9426666666666664e-06,
-                "server_s": 9.409333333333333e-06,
-                "time_s": 1.2352e-05
-            },
-            "param2": {
-                "value": 49,
-                "client_s": 3.1786666666666668e-06,
-                "server_s": 9.090666666666667e-06,
-                "time_s": 1.2269333333333335e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": -1,
-                "param2": 49
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 47
-            }
-        },
-        "setup_time_s": 0.054361233333333335,
-        "random_input_time_s": 3.153933333333334e-05,
-        "db_conversion_time_s": 1.7252666666666668e-05,
-        "update_client_time_s": 0.00179922,
-        "update_server_time_s": 0.00032002833333333335,
-        "search_1_client_s": 2.9426666666666664e-06,
-        "search_1_server_s": 9.409333333333333e-06,
-        "search_2_client_s": 3.1786666666666668e-06,
-        "search_2_server_s": 9.090666666666667e-06,
-        "post_processing_time_s": 3.1016666666666665e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 3
-    },
-    {
-        "input_index_range": 75,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 2.9966666666666666e-06,
-                "server_s": 9.898333333333333e-06,
-                "time_s": 1.2895e-05
-            },
-            "param2": {
-                "value": 74,
-                "client_s": 3.5346666666666664e-06,
-                "server_s": 9.766333333333333e-06,
-                "time_s": 1.3301e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": 0,
-                "param2": 74
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 73
-            }
-        },
-        "setup_time_s": 0.0546289,
-        "random_input_time_s": 3.4707e-05,
-        "db_conversion_time_s": 2.6331333333333333e-05,
-        "update_client_time_s": 0.0031520966666666664,
-        "update_server_time_s": 0.0005177976666666667,
-        "search_1_client_s": 2.9966666666666666e-06,
-        "search_1_server_s": 9.898333333333333e-06,
-        "search_2_client_s": 3.5346666666666664e-06,
-        "search_2_server_s": 9.766333333333333e-06,
-        "post_processing_time_s": 4.3903333333333335e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 4
-    },
-    {
-        "input_index_range": 100,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 3.146e-06,
-                "server_s": 1.1112e-05,
-                "time_s": 1.4258e-05
-            },
-            "param2": {
-                "value": 99,
-                "client_s": 3.899333333333333e-06,
-                "server_s": 1.0773e-05,
-                "time_s": 1.4672333333333332e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": 0,
-                "param2": 99
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 97
-            }
-        },
-        "setup_time_s": 0.0555038,
-        "random_input_time_s": 4.164366666666667e-05,
-        "db_conversion_time_s": 3.6950666666666665e-05,
-        "update_client_time_s": 0.004599546666666667,
-        "update_server_time_s": 0.0007229749999999999,
-        "search_1_client_s": 3.146e-06,
-        "search_1_server_s": 1.1112e-05,
-        "search_2_client_s": 3.899333333333333e-06,
-        "search_2_server_s": 1.0773e-05,
-        "post_processing_time_s": 4.270666666666667e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 5
-    },
-    {
-        "input_index_range": 250,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 2.52e-06,
-                "server_s": 8.335333333333333e-06,
-                "time_s": 1.0855333333333333e-05
-            },
-            "param2": {
-                "value": 249,
-                "client_s": 2.9073333333333335e-06,
-                "server_s": 7.976e-06,
-                "time_s": 1.0883333333333333e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": 1,
-                "param2": 249
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 248
-            }
-        },
-        "setup_time_s": 0.054297933333333326,
-        "random_input_time_s": 6.180633333333333e-05,
-        "db_conversion_time_s": 9.331966666666666e-05,
-        "update_client_time_s": 0.008879240000000002,
-        "update_server_time_s": 0.0016435199999999999,
-        "search_1_client_s": 2.52e-06,
-        "search_1_server_s": 8.335333333333333e-06,
-        "search_2_client_s": 2.9073333333333335e-06,
-        "search_2_server_s": 7.976e-06,
-        "post_processing_time_s": 3.164666666666667e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 6
-    },
-    {
-        "input_index_range": 500,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 3.0040000000000004e-06,
-                "server_s": 1.0493666666666666e-05,
-                "time_s": 1.3497666666666666e-05
-            },
-            "param2": {
-                "value": 499,
-                "client_s": 3.823666666666667e-06,
-                "server_s": 1.0154e-05,
-                "time_s": 1.3977666666666667e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": -1,
-                "param2": 499
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 499
-            }
-        },
-        "setup_time_s": 0.05602276666666667,
-        "random_input_time_s": 0.00010045733333333334,
-        "db_conversion_time_s": 0.00017156599999999998,
-        "update_client_time_s": 0.019744033333333334,
-        "update_server_time_s": 0.0035507033333333337,
-        "search_1_client_s": 3.0040000000000004e-06,
-        "search_1_server_s": 1.0493666666666666e-05,
-        "search_2_client_s": 3.823666666666667e-06,
-        "search_2_server_s": 1.0154e-05,
-        "post_processing_time_s": 5.129666666666666e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 7
-    },
-    {
-        "input_index_range": 750,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 3.471e-06,
-                "server_s": 1.2197e-05,
-                "time_s": 1.5668e-05
-            },
-            "param2": {
-                "value": 749,
-                "client_s": 4.722e-06,
-                "server_s": 1.2806666666666667e-05,
-                "time_s": 1.7528666666666667e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": 0,
-                "param2": 749
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 749
-            }
-        },
-        "setup_time_s": 0.057205733333333335,
-        "random_input_time_s": 0.000150788,
-        "db_conversion_time_s": 0.00027732666666666663,
-        "update_client_time_s": 0.03391396666666666,
-        "update_server_time_s": 0.0057410433333333335,
-        "search_1_client_s": 3.471e-06,
-        "search_1_server_s": 1.2197e-05,
-        "search_2_client_s": 4.722e-06,
-        "search_2_server_s": 1.2806666666666667e-05,
-        "post_processing_time_s": 6.2383333333333335e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 8
-    },
-    {
-        "input_index_range": 1000,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 2.7096666666666667e-06,
-                "server_s": 9.478333333333332e-06,
-                "time_s": 1.2188e-05
-            },
-            "param2": {
-                "value": 999,
-                "client_s": 3.4573333333333333e-06,
-                "server_s": 8.630666666666667e-06,
-                "time_s": 1.2088e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": 2,
-                "param2": -1
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 1000
-            }
-        },
-        "setup_time_s": 0.05676676666666666,
-        "random_input_time_s": 0.00019850300000000002,
-        "db_conversion_time_s": 0.0003512213333333334,
-        "update_client_time_s": 0.039328433333333336,
-        "update_server_time_s": 0.006049273333333333,
-        "search_1_client_s": 2.7096666666666667e-06,
-        "search_1_server_s": 9.478333333333332e-06,
-        "search_2_client_s": 3.4573333333333333e-06,
-        "search_2_server_s": 8.630666666666667e-06,
-        "post_processing_time_s": 3.951e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 9
-    },
-    {
-        "input_index_range": 2500,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 2.975333333333333e-06,
-                "server_s": 1.0320333333333335e-05,
-                "time_s": 1.3295666666666669e-05
-            },
-            "param2": {
-                "value": 2499,
-                "client_s": 4.068333333333334e-06,
-                "server_s": 9.426666666666667e-06,
-                "time_s": 1.3495000000000002e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": 0,
-                "param2": 2499
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 2498
-            }
-        },
-        "setup_time_s": 0.06182126666666667,
-        "random_input_time_s": 0.000480685,
-        "db_conversion_time_s": 0.0010278656666666665,
-        "update_client_time_s": 0.09494140000000001,
-        "update_server_time_s": 0.0141458,
-        "search_1_client_s": 2.975333333333333e-06,
-        "search_1_server_s": 1.0320333333333335e-05,
-        "search_2_client_s": 4.068333333333334e-06,
-        "search_2_server_s": 9.426666666666667e-06,
-        "post_processing_time_s": 5.466000000000001e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 10
-    },
-    {
-        "input_index_range": 5000,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 2.702e-06,
-                "server_s": 9.649666666666667e-06,
-                "time_s": 1.2351666666666667e-05
-            },
-            "param2": {
-                "value": 4999,
-                "client_s": 4.3223333333333335e-06,
-                "server_s": 9.24e-06,
-                "time_s": 1.3562333333333334e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": -1,
-                "param2": -1
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 5000
-            }
-        },
-        "setup_time_s": 0.061780100000000004,
-        "random_input_time_s": 0.0010257976666666667,
-        "db_conversion_time_s": 0.0021045066666666667,
-        "update_client_time_s": 0.17512933333333336,
-        "update_server_time_s": 0.031554266666666664,
-        "search_1_client_s": 2.702e-06,
-        "search_1_server_s": 9.649666666666667e-06,
-        "search_2_client_s": 4.3223333333333335e-06,
-        "search_2_server_s": 9.24e-06,
-        "post_processing_time_s": 5.953e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 11
-    },
-    {
-        "input_index_range": 7500,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 3.031e-06,
-                "server_s": 1.0613333333333334e-05,
-                "time_s": 1.3644333333333334e-05
-            },
-            "param2": {
-                "value": 7499,
-                "client_s": 6.218333333333334e-06,
-                "server_s": 1.0243999999999999e-05,
-                "time_s": 1.6462333333333333e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": -1,
-                "param2": -1
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 7500
-            }
-        },
-        "setup_time_s": 0.06260536666666668,
-        "random_input_time_s": 0.0012352866666666667,
-        "db_conversion_time_s": 0.0028911733333333335,
-        "update_client_time_s": 0.2609346666666667,
-        "update_server_time_s": 0.04378776666666667,
-        "search_1_client_s": 3.031e-06,
-        "search_1_server_s": 1.0613333333333334e-05,
-        "search_2_client_s": 6.218333333333334e-06,
-        "search_2_server_s": 1.0243999999999999e-05,
-        "post_processing_time_s": 7.122666666666668e-06,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 12
-    },
-    {
         "input_index_range": 10000,
         "search": {
             "param1": {
                 "value": 0,
-                "client_s": 2.6336666666666665e-06,
-                "server_s": 9.415666666666665e-06,
-                "time_s": 1.2049333333333332e-05
+                "client_s": 2.8278000000000003e-06,
+                "server_s": 1.01486e-05,
+                "time_s": 1.29764e-05
             },
             "param2": {
                 "value": 9999,
-                "client_s": 5.045000000000001e-06,
-                "server_s": 8.698666666666667e-06,
-                "time_s": 1.3743666666666669e-05
+                "client_s": 4.4869999999999996e-06,
+                "server_s": 9.549000000000003e-06,
+                "time_s": 1.4036000000000002e-05
             }
         },
         "results": {
@@ -505,159 +25,159 @@
                 "param2": 10000
             }
         },
-        "setup_time_s": 0.06272620000000001,
-        "random_input_time_s": 0.00181087,
-        "db_conversion_time_s": 0.004033763333333333,
-        "update_client_time_s": 0.35374066666666665,
-        "update_server_time_s": 0.059594633333333334,
-        "search_1_client_s": 2.6336666666666665e-06,
-        "search_1_server_s": 9.415666666666665e-06,
-        "search_2_client_s": 5.045000000000001e-06,
-        "search_2_server_s": 8.698666666666667e-06,
-        "post_processing_time_s": 6.702666666666666e-06,
+        "setup_time_s": 0.06369591999999999,
+        "random_input_time_s": 0.0018761099999999998,
+        "db_conversion_time_s": 0.0041900109999999996,
+        "update_client_time_s": 0.3426077,
+        "update_server_time_s": 0.04772099,
+        "search_1_client_s": 2.8278000000000003e-06,
+        "search_1_server_s": 1.01486e-05,
+        "search_2_client_s": 4.4869999999999996e-06,
+        "search_2_server_s": 9.549000000000003e-06,
+        "post_processing_time_s": 7.3788e-06,
         "c1": 2.0,
         "c2": 2.0,
-        "run": 13
+        "run": 1
     },
     {
         "input_index_range": 25000,
         "search": {
             "param1": {
                 "value": 0,
-                "client_s": 3.5603333333333334e-06,
-                "server_s": 1.1600333333333331e-05,
-                "time_s": 1.5160666666666665e-05
+                "client_s": 3.0421e-06,
+                "server_s": 1.02595e-05,
+                "time_s": 1.3301600000000002e-05
             },
             "param2": {
                 "value": 24999,
-                "client_s": 7.392999999999999e-06,
-                "server_s": 1.2592333333333333e-05,
-                "time_s": 1.9985333333333333e-05
+                "client_s": 7.597299999999998e-06,
+                "server_s": 1.04576e-05,
+                "time_s": 1.80549e-05
             }
         },
         "results": {
             "client0": {
-                "param1": 1,
-                "param2": -1
+                "param1": 0,
+                "param2": 24999
             },
             "client1": {
                 "param1": 0,
-                "param2": 25000
+                "param2": 24999
             }
         },
-        "setup_time_s": 0.06356486666666666,
-        "random_input_time_s": 0.004378536666666666,
-        "db_conversion_time_s": 0.011068666666666666,
-        "update_client_time_s": 0.8831899999999999,
-        "update_server_time_s": 0.15697166666666668,
-        "search_1_client_s": 3.5603333333333334e-06,
-        "search_1_server_s": 1.1600333333333331e-05,
-        "search_2_client_s": 7.392999999999999e-06,
-        "search_2_server_s": 1.2592333333333333e-05,
-        "post_processing_time_s": 1.4386e-05,
+        "setup_time_s": 0.06186547,
+        "random_input_time_s": 0.004521108999999999,
+        "db_conversion_time_s": 0.011340498000000001,
+        "update_client_time_s": 0.8576343,
+        "update_server_time_s": 0.12490129999999999,
+        "search_1_client_s": 3.0421e-06,
+        "search_1_server_s": 1.02595e-05,
+        "search_2_client_s": 7.597299999999998e-06,
+        "search_2_server_s": 1.04576e-05,
+        "post_processing_time_s": 1.3790000000000002e-05,
         "c1": 2.0,
         "c2": 2.0,
-        "run": 14
+        "run": 2
     },
     {
         "input_index_range": 50000,
         "search": {
             "param1": {
                 "value": 0,
-                "client_s": 3.0846666666666665e-06,
-                "server_s": 9.626666666666665e-06,
-                "time_s": 1.2711333333333331e-05
+                "client_s": 3.4868e-06,
+                "server_s": 1.22435e-05,
+                "time_s": 1.57303e-05
             },
             "param2": {
                 "value": 49999,
-                "client_s": 6.4319999999999996e-06,
-                "server_s": 1.0203333333333333e-05,
-                "time_s": 1.6635333333333333e-05
+                "client_s": 7.811300000000001e-06,
+                "server_s": 1.2003e-05,
+                "time_s": 1.98143e-05
             }
         },
         "results": {
             "client0": {
-                "param1": 0,
-                "param2": -1
+                "param1": -1,
+                "param2": 49999
             },
             "client1": {
                 "param1": 0,
-                "param2": 50000
+                "param2": 49997
             }
         },
-        "setup_time_s": 0.0653455,
-        "random_input_time_s": 0.010223533333333335,
-        "db_conversion_time_s": 0.0273031,
-        "update_client_time_s": 1.7424433333333333,
-        "update_server_time_s": 0.3093023333333333,
-        "search_1_client_s": 3.0846666666666665e-06,
-        "search_1_server_s": 9.626666666666665e-06,
-        "search_2_client_s": 6.4319999999999996e-06,
-        "search_2_server_s": 1.0203333333333333e-05,
-        "post_processing_time_s": 2.2118666666666665e-05,
+        "setup_time_s": 0.0665632,
+        "random_input_time_s": 0.009612837,
+        "db_conversion_time_s": 0.024826499999999998,
+        "update_client_time_s": 2.020124,
+        "update_server_time_s": 0.3274475,
+        "search_1_client_s": 3.4868e-06,
+        "search_1_server_s": 1.22435e-05,
+        "search_2_client_s": 7.811300000000001e-06,
+        "search_2_server_s": 1.2003e-05,
+        "post_processing_time_s": 2.7709699999999997e-05,
         "c1": 2.0,
         "c2": 2.0,
-        "run": 15
+        "run": 3
     },
     {
         "input_index_range": 75000,
         "search": {
             "param1": {
                 "value": 0,
-                "client_s": 3.24e-06,
-                "server_s": 1.1102000000000001e-05,
-                "time_s": 1.4342000000000001e-05
+                "client_s": 3.9256999999999995e-06,
+                "server_s": 1.2985200000000002e-05,
+                "time_s": 1.69109e-05
             },
             "param2": {
                 "value": 74999,
-                "client_s": 6.936333333333333e-06,
-                "server_s": 1.1154999999999999e-05,
-                "time_s": 1.8091333333333334e-05
+                "client_s": 8.8244e-06,
+                "server_s": 1.29723e-05,
+                "time_s": 2.17967e-05
             }
         },
         "results": {
             "client0": {
-                "param1": -1,
-                "param2": -1
+                "param1": 0,
+                "param2": 74999
             },
             "client1": {
                 "param1": 0,
-                "param2": 75000
+                "param2": 74998
             }
         },
-        "setup_time_s": 0.0641179,
-        "random_input_time_s": 0.01725036666666667,
-        "db_conversion_time_s": 0.0417297,
-        "update_client_time_s": 2.618813333333333,
-        "update_server_time_s": 0.4852803333333333,
-        "search_1_client_s": 3.24e-06,
-        "search_1_server_s": 1.1102000000000001e-05,
-        "search_2_client_s": 6.936333333333333e-06,
-        "search_2_server_s": 1.1154999999999999e-05,
-        "post_processing_time_s": 3.3404e-05,
+        "setup_time_s": 0.06427564999999999,
+        "random_input_time_s": 0.01645725,
+        "db_conversion_time_s": 0.03983112999999999,
+        "update_client_time_s": 3.217825,
+        "update_server_time_s": 0.5296852999999999,
+        "search_1_client_s": 3.9256999999999995e-06,
+        "search_1_server_s": 1.2985200000000002e-05,
+        "search_2_client_s": 8.8244e-06,
+        "search_2_server_s": 1.29723e-05,
+        "post_processing_time_s": 4.2074000000000004e-05,
         "c1": 2.0,
         "c2": 2.0,
-        "run": 16
+        "run": 4
     },
     {
         "input_index_range": 100000,
         "search": {
             "param1": {
                 "value": 0,
-                "client_s": 2.9413333333333335e-06,
-                "server_s": 1.0660666666666666e-05,
-                "time_s": 1.3602e-05
+                "client_s": 3.0512e-06,
+                "server_s": 1.1607500000000002e-05,
+                "time_s": 1.4658700000000002e-05
             },
             "param2": {
                 "value": 99999,
-                "client_s": 9.015333333333333e-06,
-                "server_s": 1.0833666666666666e-05,
-                "time_s": 1.9849e-05
+                "client_s": 7.0577e-06,
+                "server_s": 1.04699e-05,
+                "time_s": 1.7527599999999998e-05
             }
         },
         "results": {
             "client0": {
-                "param1": 0,
+                "param1": -1,
                 "param2": -1
             },
             "client1": {
@@ -665,34 +185,114 @@
                 "param2": 100000
             }
         },
-        "setup_time_s": 0.06313629999999999,
-        "random_input_time_s": 0.0195784,
-        "db_conversion_time_s": 0.046112099999999996,
-        "update_client_time_s": 3.5212233333333334,
-        "update_server_time_s": 0.6682103333333332,
-        "search_1_client_s": 2.9413333333333335e-06,
-        "search_1_server_s": 1.0660666666666666e-05,
-        "search_2_client_s": 9.015333333333333e-06,
-        "search_2_server_s": 1.0833666666666666e-05,
-        "post_processing_time_s": 4.520566666666667e-05,
+        "setup_time_s": 0.06414138999999999,
+        "random_input_time_s": 0.01874621,
+        "db_conversion_time_s": 0.04683029,
+        "update_client_time_s": 3.5884539999999996,
+        "update_server_time_s": 0.586538,
+        "search_1_client_s": 3.0512e-06,
+        "search_1_server_s": 1.1607500000000002e-05,
+        "search_2_client_s": 7.0577e-06,
+        "search_2_server_s": 1.04699e-05,
+        "post_processing_time_s": 4.60278e-05,
         "c1": 2.0,
         "c2": 2.0,
-        "run": 17
+        "run": 5
     },
     {
         "input_index_range": 250000,
         "search": {
             "param1": {
                 "value": 0,
-                "client_s": 3.171666666666667e-06,
-                "server_s": 1.0393333333333333e-05,
-                "time_s": 1.3565e-05
+                "client_s": 3.1668999999999997e-06,
+                "server_s": 1.0981199999999999e-05,
+                "time_s": 1.41481e-05
             },
             "param2": {
                 "value": 249999,
-                "client_s": 7.586333333333333e-06,
-                "server_s": 9.370333333333332e-06,
-                "time_s": 1.6956666666666666e-05
+                "client_s": 7.635900000000001e-06,
+                "server_s": 1.08577e-05,
+                "time_s": 1.8493600000000002e-05
+            }
+        },
+        "results": {
+            "client0": {
+                "param1": 1,
+                "param2": 249999
+            },
+            "client1": {
+                "param1": 0,
+                "param2": 249999
+            }
+        },
+        "setup_time_s": 0.06546756999999999,
+        "random_input_time_s": 0.05228132,
+        "db_conversion_time_s": 0.11553290000000001,
+        "update_client_time_s": 8.959640000000002,
+        "update_server_time_s": 1.622203,
+        "search_1_client_s": 3.1668999999999997e-06,
+        "search_1_server_s": 1.0981199999999999e-05,
+        "search_2_client_s": 7.635900000000001e-06,
+        "search_2_server_s": 1.08577e-05,
+        "post_processing_time_s": 0.0001118619,
+        "c1": 2.0,
+        "c2": 2.0,
+        "run": 6
+    },
+    {
+        "input_index_range": 500000,
+        "search": {
+            "param1": {
+                "value": 0,
+                "client_s": 4.0556e-06,
+                "server_s": 1.6781399999999995e-05,
+                "time_s": 2.0836999999999994e-05
+            },
+            "param2": {
+                "value": 499999,
+                "client_s": 8.674199999999999e-06,
+                "server_s": 1.1084300000000002e-05,
+                "time_s": 1.97585e-05
+            }
+        },
+        "results": {
+            "client0": {
+                "param1": 1,
+                "param2": 499999
+            },
+            "client1": {
+                "param1": 0,
+                "param2": 499998
+            }
+        },
+        "setup_time_s": 0.06428256000000002,
+        "random_input_time_s": 0.09661123,
+        "db_conversion_time_s": 0.24260739999999997,
+        "update_client_time_s": 18.390990000000002,
+        "update_server_time_s": 3.345424,
+        "search_1_client_s": 4.0556e-06,
+        "search_1_server_s": 1.6781399999999995e-05,
+        "search_2_client_s": 8.674199999999999e-06,
+        "search_2_server_s": 1.1084300000000002e-05,
+        "post_processing_time_s": 0.00011970240000000001,
+        "c1": 2.0,
+        "c2": 2.0,
+        "run": 7
+    },
+    {
+        "input_index_range": 750000,
+        "search": {
+            "param1": {
+                "value": 0,
+                "client_s": 5.5111e-06,
+                "server_s": 1.6731599999999997e-05,
+                "time_s": 2.2242699999999996e-05
+            },
+            "param2": {
+                "value": 749999,
+                "client_s": 9.184e-06,
+                "server_s": 1.0457199999999999e-05,
+                "time_s": 1.9641199999999998e-05
             }
         },
         "results": {
@@ -702,117 +302,37 @@
             },
             "client1": {
                 "param1": 0,
-                "param2": 250000
-            }
-        },
-        "setup_time_s": 0.06242866666666667,
-        "random_input_time_s": 0.040956766666666665,
-        "db_conversion_time_s": 0.11681899999999999,
-        "update_client_time_s": 8.91032,
-        "update_server_time_s": 1.86976,
-        "search_1_client_s": 3.171666666666667e-06,
-        "search_1_server_s": 1.0393333333333333e-05,
-        "search_2_client_s": 7.586333333333333e-06,
-        "search_2_server_s": 9.370333333333332e-06,
-        "post_processing_time_s": 0.00010315833333333334,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 18
-    },
-    {
-        "input_index_range": 500000,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 3.7573333333333334e-06,
-                "server_s": 1.4426666666666669e-05,
-                "time_s": 1.8184e-05
-            },
-            "param2": {
-                "value": 499999,
-                "client_s": 9.222666666666667e-06,
-                "server_s": 1.0427666666666668e-05,
-                "time_s": 1.9650333333333337e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": 0,
-                "param2": 499999
-            },
-            "client1": {
-                "param1": 0,
-                "param2": 499999
-            }
-        },
-        "setup_time_s": 0.06042486666666667,
-        "random_input_time_s": 0.09299430000000002,
-        "db_conversion_time_s": 0.23707666666666669,
-        "update_client_time_s": 17.7878,
-        "update_server_time_s": 3.7369800000000004,
-        "search_1_client_s": 3.7573333333333334e-06,
-        "search_1_server_s": 1.4426666666666669e-05,
-        "search_2_client_s": 9.222666666666667e-06,
-        "search_2_server_s": 1.0427666666666668e-05,
-        "post_processing_time_s": 0.00011994933333333332,
-        "c1": 2.0,
-        "c2": 2.0,
-        "run": 19
-    },
-    {
-        "input_index_range": 750000,
-        "search": {
-            "param1": {
-                "value": 0,
-                "client_s": 7.147e-06,
-                "server_s": 1.7163e-05,
-                "time_s": 2.4310000000000003e-05
-            },
-            "param2": {
-                "value": 749999,
-                "client_s": 7.2063333333333325e-06,
-                "server_s": 1.1126999999999999e-05,
-                "time_s": 1.833333333333333e-05
-            }
-        },
-        "results": {
-            "client0": {
-                "param1": 1,
-                "param2": -1
-            },
-            "client1": {
-                "param1": 0,
                 "param2": 750000
             }
         },
-        "setup_time_s": 0.06197653333333334,
-        "random_input_time_s": 0.154036,
-        "db_conversion_time_s": 0.3564096666666667,
-        "update_client_time_s": 27.011533333333333,
-        "update_server_time_s": 5.745863333333332,
-        "search_1_client_s": 7.147e-06,
-        "search_1_server_s": 1.7163e-05,
-        "search_2_client_s": 7.2063333333333325e-06,
-        "search_2_server_s": 1.1126999999999999e-05,
-        "post_processing_time_s": 0.0002057906666666667,
+        "setup_time_s": 0.06461687999999999,
+        "random_input_time_s": 0.15532209999999996,
+        "db_conversion_time_s": 0.3713984,
+        "update_client_time_s": 27.749300000000005,
+        "update_server_time_s": 5.167096,
+        "search_1_client_s": 5.5111e-06,
+        "search_1_server_s": 1.6731599999999997e-05,
+        "search_2_client_s": 9.184e-06,
+        "search_2_server_s": 1.0457199999999999e-05,
+        "post_processing_time_s": 0.0001668571,
         "c1": 2.0,
         "c2": 2.0,
-        "run": 20
+        "run": 8
     },
     {
         "input_index_range": 1000000,
         "search": {
             "param1": {
                 "value": 0,
-                "client_s": 4.844666666666667e-06,
-                "server_s": 1.7928e-05,
-                "time_s": 2.2772666666666666e-05
+                "client_s": 5.7733e-06,
+                "server_s": 1.8871300000000003e-05,
+                "time_s": 2.4644600000000005e-05
             },
             "param2": {
                 "value": 999999,
-                "client_s": 7.879666666666667e-06,
-                "server_s": 1.1028333333333332e-05,
-                "time_s": 1.8908e-05
+                "client_s": 8.2788e-06,
+                "server_s": 1.18578e-05,
+                "time_s": 2.01366e-05
             }
         },
         "results": {
@@ -825,18 +345,18 @@
                 "param2": 1000000
             }
         },
-        "setup_time_s": 0.06240950000000001,
-        "random_input_time_s": 0.205426,
-        "db_conversion_time_s": 0.4906173333333333,
-        "update_client_time_s": 36.38563333333333,
-        "update_server_time_s": 7.520893333333333,
-        "search_1_client_s": 4.844666666666667e-06,
-        "search_1_server_s": 1.7928e-05,
-        "search_2_client_s": 7.879666666666667e-06,
-        "search_2_server_s": 1.1028333333333332e-05,
-        "post_processing_time_s": 0.00020086166666666665,
+        "setup_time_s": 0.06463126,
+        "random_input_time_s": 0.2112164,
+        "db_conversion_time_s": 0.5011992000000001,
+        "update_client_time_s": 36.925219999999996,
+        "update_server_time_s": 6.930485,
+        "search_1_client_s": 5.7733e-06,
+        "search_1_server_s": 1.8871300000000003e-05,
+        "search_2_client_s": 8.2788e-06,
+        "search_2_server_s": 1.18578e-05,
+        "post_processing_time_s": 0.00021220139999999997,
         "c1": 2.0,
         "c2": 2.0,
-        "run": 21
+        "run": 9
     }
 ]

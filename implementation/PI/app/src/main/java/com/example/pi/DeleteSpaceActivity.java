@@ -54,7 +54,7 @@ public class DeleteSpaceActivity extends AppCompatActivity {
 
     private void fetchSpaces(String token) {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String ip = prefs.getString("last_ip", "10.0.2.2");
+        String ip = prefs.getString("last_ip", BuildConfig.SERVER_IP);
         String url = "http://" + ip + ":3000/api/get-spaces";
 
         executor.execute(() -> {
@@ -101,7 +101,7 @@ public class DeleteSpaceActivity extends AppCompatActivity {
     private void deleteSpace(String name, View view) {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
-        String ip = prefs.getString("last_ip", "10.0.2.2");
+        String ip = prefs.getString("last_ip", BuildConfig.SERVER_IP);
         String url = "http://" + ip + ":3000/api/delete";
 
         // Grey out and disable to prevent double clicks
