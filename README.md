@@ -1,9 +1,9 @@
-# PI using DSSE
+# PI using SSE
 
-This project implements a PI protocol built on top of **Dynamic Searchable Symmetric Encryption (DSSE)**. It allows for privacy-preserving range queries and set operations using bit sequences.
+This project implements a PI protocol built on top of **Searchable Symmetric Encryption (SSE)**. It allows for privacy-preserving range queries and set operations using bit sequences.
 
-## 1. DSSE (Dynamic Searchable Symmetric Encryption)
-The core encryption layer uses the **FAST** scheme. DSSE allows a client to encrypt their data such that it remains searchable by a server without revealing the actual content or keywords to the server (unless a search token is provided).
+## 1. SSE (Searchable Symmetric Encryption)
+The core encryption layer uses the **FAST** scheme. SSE allows a client to encrypt their data such that it remains searchable by a server without revealing the actual content or keywords to the server (unless a search token is provided).
 
 - **Setup**: Initializes the encryption keys and the server-side database (RocksDB).
 - **Update**: Encrypts and sends data to the server. This project pads data to a fixed length (15 bytes) to ensure consistency.
@@ -13,13 +13,13 @@ The core encryption layer uses the **FAST** scheme. DSSE allows a client to encr
 The main logic is contained in `queen.cpp`, which follows this lifecycle:
 
 ### A. Initialization & Setup
-- The DSSE system is initialized.
-- A local database (`inp`) is converted and uploaded to the DSSE server using `Update_client` and `Update_server`.
+- The SSE system is initialized.
+- A local database (`inp`) is converted and uploaded to the SSE server using `Update_client` and `Update_server`.
 
 ### B. Interactive Search Loop
 The program enters a loop asking the user for two search parameters (`param1` and `param2`). For each search:
 
-1.  **DSSE Search**: Search tokens are generated and sent to the server to retrieve raw search results.
+1.  **SSE Search**: Search tokens are generated and sent to the server to retrieve raw search results.
 2.  **Bit Sequence Generation**:
     - **`less_than(n, k)`**: Returns a `BitSequence` where the first `k` bits are set to 1. This represents the "Less Than" property of the search result.
     - **`equal_bits(a, b, n)`**: Returns a `BitSequence` with bits in the range `[a, b]` set to 1.
@@ -42,7 +42,7 @@ bash run_pi.sh
 Follow the prompts to enter search parameters. Enter `0` when asked if you want to continue to exit the loop.
 ## 5. Server Implementation (Node.js + RocksDB)
 
-This document provides a comprehensive guide to the **PI Server**, a secure Node.js application integrated with a high-performance C++ RocksDB backend for encrypted search (DSSE).
+This document provides a comprehensive guide to the **PI Server**, a secure Node.js application integrated with a high-performance C++ RocksDB backend for encrypted search (SSE).
 
 ### 5.1 Architecture Overview
 
@@ -86,7 +86,7 @@ We provide a comprehensive bash utility to manage the server lifecycle.
 
 **Features:**
 -   **Install Dependencies**: `npm install`.
--   **Recompile C++**: Rebuilds the DSSE binary.
+-   **Recompile C++**: Rebuilds the SSE binary.
 -   **Clean Data**: Wipes all user data and logs (dev utility).
 -   **Run Tests**: Executes the verification suite.
 -   **Start Server**: Runs the server in the background with process control (Restart/Stop/View Logs).
@@ -161,7 +161,7 @@ node test/verify_suite.js
 6.  **Clean Deletion**: Verifies that `DELETE` operations physically remove the folders from the disk.
 7.  **Logout Security**: Confirms that tokens are immediately invalidated after logout.
 ### 5.8 Recent Updates (March 2026)
-- **Batch Update Implementation**: The server now supports a bulk-save endpoint (`/api/bulk-save-index_value`) that accepts arrays of tokens. This reduces network overhead for the 200,000 token pairs generated during a standard DSSE update.
+- **Batch Update Implementation**: The server now supports a bulk-save endpoint (`/api/bulk-save-index_value`) that accepts arrays of tokens. This reduces network overhead for the 200,000 token pairs generated during a standard SSE update.
 - **Improved C++ Error Handling**: The `dsse_server` binary now performs input validation and whitespace trimming to prevent XOR length mismatch errors during search.
 - **Node.js Memory Limits**: Express JSON limits increased to `50MB` to accommodate bulk token transfers.
 
@@ -173,7 +173,7 @@ The Android application provides a user-friendly interface for interacting with 
 - **Secure Authentication**: Register and Login with JWT persistence.
 - **Secure Update**: 
     - Takes raw files (e.g., locally stored documents).
-    - Generates 200,000 (u, e) token pairs using the local FAST/DSSE engine.
+    - Generates 200,000 (u, e) token pairs using the local FAST/SSE engine.
     - Sends tokens in **batches of 5,000** to the server for efficiency.
 - **Private Search**:
     - Users input two parameters (p1, p2).
