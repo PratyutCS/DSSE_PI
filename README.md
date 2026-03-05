@@ -160,3 +160,75 @@ node test/verify_suite.js
 5.  **Secure Download**: Verifies file integrity by downloading and comparing hashes.
 6.  **Clean Deletion**: Verifies that `DELETE` operations physically remove the folders from the disk.
 7.  **Logout Security**: Confirms that tokens are immediately invalidated after logout.
+### 5.8 Recent Updates (March 2026)
+- **Batch Update Implementation**: The server now supports a bulk-save endpoint (`/api/bulk-save-index_value`) that accepts arrays of tokens. This reduces network overhead for the 200,000 token pairs generated during a standard DSSE update.
+- **Improved C++ Error Handling**: The `dsse_server` binary now performs input validation and whitespace trimming to prevent XOR length mismatch errors during search.
+- **Node.js Memory Limits**: Express JSON limits increased to `50MB` to accommodate bulk token transfers.
+
+## 6. Android Frontend Implementation
+
+The Android application provides a user-friendly interface for interacting with the PI system. It handles all cryptographic operations locally using NDK (C++) to ensure that the server never sees raw data or keys.
+
+### 6.1 Main Features
+- **Secure Authentication**: Register and Login with JWT persistence.
+- **Secure Update**: 
+    - Takes raw files (e.g., locally stored documents).
+    - Generates 200,000 (u, e) token pairs using the local FAST/DSSE engine.
+    - Sends tokens in **batches of 5,000** to the server for efficiency.
+- **Private Search**:
+    - Users input two parameters (p1, p2).
+    - App generates search tokens and interacts with the PI Server.
+    - **Visual Results**: Displays matched record IDs (e.g., `ID1`, `ID3`) in a dedicated results panel.
+- **Key Persistence**: The master encryption key is saved to `master_key.bin` in the app's internal storage. This ensures the same key is used for both Update and Search sessions.
+
+### 6.2 Prerequisites (Android)
+- **Android Studio** (Ladybug or newer)
+- **NDK (Side-by-side)** and **CMake** installed via SDK Manager.
+- **External Libraries**: RocksDB and Crypto++ compiled for Android architectures (arm64-v8a, x86_64, etc.) and placed in `implementation/PI/app/src/main/cpp/libs/`.
+
+### 6.3 Compilation & Build (Android)
+
+1.  **Configure Server IP**:
+    - Open `implementation/PI/gradle.properties`.
+    - Set `SERVER_IP` to your server's reachable IP address (e.g., `192.168.1.10`).
+2.  **Build Project**:
+    - Open the `implementation/PI` directory in Android Studio.
+    - Sync Gradle.
+    - Build -> Make Project (this will automatically invoke CMake to build the local C++/JNI code).
+3.  **Run**:
+    - Connect an Android device or use an emulator.
+    - Click **Run 'app'**.
+
+## 7. Operational Workflow (End-to-End)
+
+To run the complete system successfully, follow these steps in order:
+
+### 1. Start the Server
+```bash
+cd implementation/server
+npm run compile     # Compiles the C++ backend
+npm start           # Starts the Node.js server
+```
+*Ensure MongoDB is running locally on port 27017.*
+
+### 2. Configure Android App
+- Ensure the `SERVER_IP` in `gradle.properties` matches the server started in step 1.
+- Install the app on your device.
+
+### 3. Initialize & Upload (Update Phase)
+- Register/Login on the app.
+- Create a new "Space".
+- In **Update Activity**, select files.
+- Click **GENERATE TOKENS**. Wait for the batch upload to complete (you can monitor progress in Logcat/Server logs).
+
+### 4. Search (Query Phase)
+- Go to **Search Activity**.
+- Select the Space you just populated.
+- Enter two numeric parameters (e.g., find records where `v >= 10` AND `v <= 50`).
+- Click **CONNECT**.
+- The app will display **"MATCHED RECORDS"** with labels like `ID12, ID45...` representing the files that matched your criteria.
+
+## 8. Development & Stability
+- **No Native Crashes**: The JNI layer has been hardened to prevent `SIGSEGV` by ensuring proper pointer initialization (`nullptr`) in the C++ constructor.
+- **Resource Management**: RocksDB handles are explicitly closed to prevent database locks on mobile devices.
+- **Git Ignore**: The project includes a `.gitignore` that prevents large `.a` and `.so` binaries from bloating the repository.
