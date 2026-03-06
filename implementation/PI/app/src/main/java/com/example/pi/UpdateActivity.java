@@ -46,7 +46,7 @@ public class UpdateActivity extends AppCompatActivity {
         System.loadLibrary("pi");
     }
 
-    private native String[] generateTokens(String[] filePaths, int[] keywords);
+    private native String[] generateTokens(String storagePath, String[] filePaths, int[] keywords);
 
     private Spinner spinnerSpaces;
     private Button btnPerformUpdate, btnAddFile;
@@ -92,7 +92,7 @@ public class UpdateActivity extends AppCompatActivity {
         btnBack.setVisibility(View.VISIBLE);
         btnBack.setOnClickListener(v -> finish());
 
-        btnAddFile.setOnClickListener(v -> filePickerLauncher.launch("text/plain"));
+        btnAddFile.setOnClickListener(v -> filePickerLauncher.launch("*/*"));
         btnPerformUpdate.setOnClickListener(v -> performUpdate());
 
         fetchEmptySpaces();
@@ -159,26 +159,37 @@ public class UpdateActivity extends AppCompatActivity {
                     filePathsList.add(paths[i]);
                 }
                 
-                // 1. Generate Tokens via JNI
-                System.out.println("[UPDATE PI] tokens generating");
-                String[] tokens = generateTokens(paths, keywords);
-                System.out.println("[UPDATE PI] tokens generated");
+                // 1. Create encrypted directory in storage path
+                File storageBase = getFilesDir();
+                File encryptedDir = new File(storageBase, "encrypted");
+                if (!encryptedDir.exists()) encryptedDir.mkdirs();
+
+                // 2. Generate Tokens via JNI
+                System.out.println("[UPDATE PI] tokens and encrypted files generating");
+                String storagePath = getFilesDir().getAbsolutePath();
+                String[] jniResult = generateTokens(storagePath, paths, keywords);
+                System.out.println("[UPDATE PI] tokens and encrypted files generated");
                 
-                // 2. Send tokens in batches to server via bulk endpoint
+                // jniResult: [u0, e0, ..., uN, eN, path0, path1, ...]
+                // result.size() * 2 = 200,000 * 2 = 400,000 for tokens
+                // filesCount = paths.length
+                
+                int tokenCount = 200000;
+                int tokenEntries = tokenCount * 2;
+                
+                // 3. Send tokens in batches to server via bulk endpoint
                 System.out.println("[UPDATE PI] sending tokens to server");
-                if (tokens != null && tokens.length >= 2) {
+                if (jniResult != null && jniResult.length >= tokenEntries) {
                     int BATCH_SIZE = 5000;
-                    int totalPairs = tokens.length / 2;
-                    Log.i("PI_UPDATE", "Total token pairs to send: " + totalPairs);
                     
-                    for (int batchStart = 0; batchStart < totalPairs; batchStart += BATCH_SIZE) {
-                        int batchEnd = Math.min(batchStart + BATCH_SIZE, totalPairs);
+                    for (int batchStart = 0; batchStart < tokenCount; batchStart += BATCH_SIZE) {
+                        int batchEnd = Math.min(batchStart + BATCH_SIZE, tokenCount);
                         
                         JSONArray pairsArray = new JSONArray();
                         for (int j = batchStart; j < batchEnd; j++) {
                             JSONObject pair = new JSONObject();
-                            pair.put("key", tokens[j * 2]);
-                            pair.put("value", tokens[j * 2 + 1]);
+                            pair.put("key", jniResult[j * 2]);
+                            pair.put("value", jniResult[j * 2 + 1]);
                             pairsArray.put(pair);
                         }
                         
@@ -186,19 +197,27 @@ public class UpdateActivity extends AppCompatActivity {
                         body.put("dbName", dbName);
                         body.put("pairs", pairsArray);
                         
-                        Log.i("PI_UPDATE", "Sending batch " + (batchStart / BATCH_SIZE + 1) + 
-                                " (" + pairsArray.length() + " pairs)");
-                        NetworkUtils.performPostRequest(
-                                baseUrl + "/bulk-save-index_value", body.toString(), token);
+                        Log.i("PI_UPDATE", "Sending token batch " + (batchStart / BATCH_SIZE + 1));
+                        NetworkUtils.performPostRequest(baseUrl + "/bulk-save-index_value", body.toString(), token);
                     }
-                    Log.i("PI_UPDATE", "All batches sent successfully");
+                    Log.i("PI_UPDATE", "All token batches sent successfully");
                 }
-                System.out.println("[UPDATE PI] tokens sent to server");
                 
-                // 3. Upload files to server
-                System.out.println("[UPDATE PI] uploading files to server");
-                NetworkUtils.performMultipartRequest(baseUrl + "/upload_files", dbName, filePathsList, token);
-                System.out.println("[UPDATE PI] files uploaded to server");
+                // 4. Upload encrypted files to server
+                System.out.println("[UPDATE PI] uploading encrypted files to server");
+                List<String> encryptedPathsList = new ArrayList<>();
+                if (jniResult != null && jniResult.length > tokenEntries) {
+                    for (int i = tokenEntries; i < jniResult.length; i++) {
+                        encryptedPathsList.add(jniResult[i]);
+                    }
+                    NetworkUtils.performMultipartRequest(baseUrl + "/upload_files", dbName, encryptedPathsList, token);
+                }
+                System.out.println("[UPDATE PI] encrypted files uploaded to server");
+                
+                // 5. Cleanup encrypted files from device
+                for (String path : encryptedPathsList) {
+                    new File(path).delete();
+                }
                 
                 handler.post(() -> {
                     setUIEnabled(true);

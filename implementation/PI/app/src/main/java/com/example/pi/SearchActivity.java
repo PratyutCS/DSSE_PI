@@ -15,6 +15,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.Environment;
+import android.provider.Settings;
+import android.content.Intent;
+import android.os.Build;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +26,7 @@ import com.example.pi.network.NetworkUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.io.File;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +39,9 @@ public class SearchActivity extends AppCompatActivity {
         System.loadLibrary("pi");
     }
 
-    private native String[] getSearchToken(String keyword);
-    private native int[] performPostProcessing(int indexRange, String res1_0, String res1_1, String res2_0, String res2_1);
+    private native String[] getSearchToken(String storagePath, String keyword);
+    private native int[] performPostProcessing(String storagePath, int indexRange, String res1_0, String res1_1, String res2_0, String res2_1);
+    private native boolean decryptResultFile(String storagePath, String encryptedPath, String decryptedPath);
 
     private AutoCompleteTextView actvSpaceSelector;
     private android.widget.EditText etParam1, etParam2;
@@ -102,11 +108,28 @@ public class SearchActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Searching...", Toast.LENGTH_SHORT).show();
 
+        // 0. Check for MANAGE_EXTERNAL_STORAGE permission on Android 11+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+                Toast.makeText(this, "Please grant 'All Files Access' to save results to SD card", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
         executor.execute(() -> {
             try {
+                String storagePath = getFilesDir().getAbsolutePath();
+                
+                // 0. Cleanup previous searches
+                File publicDecryptedDir = new File(Environment.getExternalStorageDirectory(), "PI_SearchResults");
+                clearDirectories(new File(getFilesDir(), "downloads"), publicDecryptedDir);
+                
                 // 1. Get tokens for param 1
                 Log.i("PI_SEARCH", "Generating token for P1: " + p1);
-                String[] tokens1 = getSearchToken(p1);
+                String[] tokens1 = getSearchToken(storagePath, p1);
                 Log.i("PI_SEARCH", "P1 Tokens: u=" + tokens1[0] + ", count=" + tokens1[2]);
                 
                 String url1 = baseUrl + "?dbName=" + dbName + "&keyword_token=" + Uri.encode(tokens1[0]) + "&state_token=" + Uri.encode(tokens1[1]) + "&count=" + tokens1[2];
@@ -117,7 +140,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 // 2. Get tokens for param 2
                 Log.i("PI_SEARCH", "Generating token for P2: " + p2);
-                String[] tokens2 = getSearchToken(p2);
+                String[] tokens2 = getSearchToken(storagePath, p2);
                 Log.i("PI_SEARCH", "P2 Tokens: u=" + tokens2[0] + ", count=" + tokens2[2]);
                 
                 String url2 = baseUrl + "?dbName=" + dbName + "&keyword_token=" + Uri.encode(tokens2[0]) + "&state_token=" + Uri.encode(tokens2[1]) + "&count=" + tokens2[2];
@@ -134,7 +157,35 @@ public class SearchActivity extends AppCompatActivity {
                 String r20 = res2.length() > 0 ? res2.getString(0) : "-1";
                 String r21 = res2.length() > 1 ? res2.getString(1) : "-1";
 
-                int[] ids = performPostProcessing(100000, r10, r11, r20, r21);
+                int[] ids = performPostProcessing(storagePath, 100000, r10, r11, r20, r21);
+
+                // 4. Download and Decrypt matched files
+                File internalBase = getFilesDir();
+                File downloadDir = new File(internalBase, "downloads");
+                File decryptedDir = new File(Environment.getExternalStorageDirectory(), "PI_SearchResults");
+                
+                if (!downloadDir.exists()) downloadDir.mkdirs();
+                if (!decryptedDir.exists()) decryptedDir.mkdirs();
+
+                for (int id : ids) {
+                    String fileId = "ID" + id;
+                    String downloadUrl = "http://" + ip + ":3000/api/download-file?dbName=" + dbName + "&fileId=" + fileId;
+                    
+                    Log.i("PI_SEARCH", "Downloading " + fileId);
+                    // downloadFile now returns the actual filename from the server (e.g. ID0.pdf)
+                    String downloadedFileName = NetworkUtils.downloadFile(downloadUrl, downloadDir.getAbsolutePath(), token);
+                    
+                    File encFile = new File(downloadDir, downloadedFileName);
+                    File decFile = new File(decryptedDir, downloadedFileName.replace(fileId, fileId + "_decrypted"));
+
+                    Log.i("PI_SEARCH", "Decrypting " + downloadedFileName);
+                    boolean success = decryptResultFile(storagePath, encFile.getAbsolutePath(), decFile.getAbsolutePath());
+                    if (success) {
+                        Log.i("PI_SEARCH", "Successfully decrypted " + downloadedFileName + " to " + decFile.getAbsolutePath());
+                    } else {
+                        Log.e("PI_SEARCH", "Failed to decrypt " + downloadedFileName);
+                    }
+                }
 
                 handler.post(() -> {
                     if (ids.length == 0) {
@@ -142,9 +193,10 @@ public class SearchActivity extends AppCompatActivity {
                         tvResultsTitle.setVisibility(View.GONE);
                         svResults.setVisibility(View.GONE);
                     } else {
-                        Toast.makeText(this, "Found " + ids.length + " matching IDs!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Found " + ids.length + " matching IDs! Files saved in: " + decryptedDir.getAbsolutePath(), Toast.LENGTH_LONG).show();
                         
                         StringBuilder sb = new StringBuilder();
+                        sb.append("Files recovered to: ").append(decryptedDir.getAbsolutePath()).append("\n\n");
                         for (int i = 0; i < ids.length; i++) {
                             sb.append("ID").append(ids[i]);
                             if (i < ids.length - 1) {
@@ -159,7 +211,7 @@ public class SearchActivity extends AppCompatActivity {
                         tvResultsTitle.setVisibility(View.VISIBLE);
                         svResults.setVisibility(View.VISIBLE);
                         
-                        Log.i("PI_SEARCH", "Found IDs: " + sb.toString());
+                        Log.i("PI_SEARCH", "Matched IDs: " + sb.toString());
                     }
                 });
 
@@ -168,6 +220,17 @@ public class SearchActivity extends AppCompatActivity {
                 handler.post(() -> Toast.makeText(this, "Search failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
         });
+    }
+
+    private void clearDirectories(File... dirs) {
+        for (File dir : dirs) {
+            if (dir != null && dir.exists() && dir.isDirectory()) {
+                File[] files = dir.listFiles();
+                if (files != null) {
+                    for (File f : files) f.delete();
+                }
+            }
+        }
     }
 
     private void fetchSpaces(String token) {

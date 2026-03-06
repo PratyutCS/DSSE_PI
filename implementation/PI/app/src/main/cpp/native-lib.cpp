@@ -5,12 +5,12 @@
 #include <algorithm>
 #include <android/log.h>
 #include <cryptopp/base64.h>
+#include "FAST.h"
 
 #define LOG_TAG "PI_NATIVE"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
-// Global storage path for RocksDB
-static std::string g_storagePath = "";
+
 
 // Helper to encode binary data to Base64 for safe JNI transfer
 std::string toBase64(const std::string& input) {
@@ -40,14 +40,12 @@ Java_com_example_pi_MainActivity_initializeNative(
         JNIEnv* env,
         jobject /* this */,
         jstring storagePathString) {
-    const char* pathChars = env->GetStringUTFChars(storagePathString, nullptr);
-    g_storagePath = std::string(pathChars);
-    env->ReleaseStringUTFChars(storagePathString, pathChars);
-    LOGI("Native library initialized with storage path: %s", g_storagePath.c_str());
+    // No longer strictly needed if we pass path everywhere, but we can keep it for backward compatibility if needed
+    // For now, let's just make everything explicit.
 }
 
 // Forward declarations from queen.cpp
-std::vector<std::tuple<std::string, std::string>> queen_process(std::vector<std::tuple<std::string, int>> &inp, const std::string &storage_path);
+std::vector<std::tuple<std::string, std::string>> queen_process(std::vector<std::tuple<std::string, int>> &inp, const std::string &storage_path, std::vector<std::string> &encrypted_paths);
 std::tuple<std::string, std::string, int> queen_search_client(std::string keyword, const std::string &storage_path);
 std::vector<int> queen_post_process(int index_range, std::string res1_0, std::string res1_1, std::string res2_0, std::string res2_1);
 
@@ -63,9 +61,14 @@ extern "C" JNIEXPORT jobjectArray JNICALL
 Java_com_example_pi_UpdateActivity_generateTokens(
         JNIEnv* env,
         jobject /* this */,
+        jstring storagePath,
         jobjectArray filePaths,
         jintArray keywords) {
     
+    const char* storageChars = env->GetStringUTFChars(storagePath, nullptr);
+    std::string sPath(storageChars);
+    env->ReleaseStringUTFChars(storagePath, storageChars);
+
     int len = env->GetArrayLength(filePaths);
     jint* keywordsPtr = env->GetIntArrayElements(keywords, nullptr);
     
@@ -83,32 +86,90 @@ Java_com_example_pi_UpdateActivity_generateTokens(
     env->ReleaseIntArrayElements(keywords, keywordsPtr, JNI_ABORT);
     
     // Call the redirection logic in queen.cpp to get (u, e) tokens
-    auto result = queen_process(input, g_storagePath);
+    std::vector<std::string> encrypted_paths;
+    auto result = queen_process(input, sPath, encrypted_paths);
     
-    LOGI("Token generation complete. Result size: %zu", result.size());
+    LOGI("Token generation complete. Result size: %zu, Files: %zu", result.size(), encrypted_paths.size());
     
-    // Return pairs as flattened array [u1, e1, u2, e2, ...]
+    // Return Flattened array: tokens (u1, e1, ...) THEN encrypted file paths
     jclass stringClass = env->FindClass("java/lang/String");
-    jobjectArray tokenArray = env->NewObjectArray(result.size() * 2, stringClass, nullptr);
+    jobjectArray combinedArray = env->NewObjectArray(result.size() * 2 + encrypted_paths.size(), stringClass, nullptr);
     
+    // Fill tokens - WE MUST CAREFULLY MANAGE LOCAL REFERENCES HERE
+    // Android JNI local ref table has a small limit (often 512).
+    // We are generating 400k tokens, so we MUST use DeleteLocalRef.
     for (size_t i = 0; i < result.size(); i++) {
         std::string u_b64 = toBase64(std::get<0>(result[i]));
         std::string e_b64 = toBase64(std::get<1>(result[i]));
-        env->SetObjectArrayElement(tokenArray, i * 2, env->NewStringUTF(u_b64.c_str()));
-        env->SetObjectArrayElement(tokenArray, i * 2 + 1, env->NewStringUTF(e_b64.c_str()));
+        
+        jstring u_jstr = env->NewStringUTF(u_b64.c_str());
+        jstring e_jstr = env->NewStringUTF(e_b64.c_str());
+        
+        env->SetObjectArrayElement(combinedArray, i * 2, u_jstr);
+        env->SetObjectArrayElement(combinedArray, i * 2 + 1, e_jstr);
+        
+        // Critically important: delete the local references we just created
+        env->DeleteLocalRef(u_jstr);
+        env->DeleteLocalRef(e_jstr);
     }
     
-    return tokenArray;
+    // Fill file paths (after tokens)
+    int offset = result.size() * 2;
+    for (size_t i = 0; i < encrypted_paths.size(); i++) {
+        jstring p_jstr = env->NewStringUTF(encrypted_paths[i].c_str());
+        env->SetObjectArrayElement(combinedArray, offset + i, p_jstr);
+        env->DeleteLocalRef(p_jstr);
+    }
+    
+    return combinedArray;
+}
+
+extern "C" JNIEXPORT jboolean JNICALL
+Java_com_example_pi_SearchActivity_decryptResultFile(
+        JNIEnv* env,
+        jobject /* this */,
+        jstring storagePath,
+        jstring encryptedPath,
+        jstring decryptedPath) {
+    
+    const char* storageChars = env->GetStringUTFChars(storagePath, nullptr);
+    std::string sPath(storageChars);
+    env->ReleaseStringUTFChars(storagePath, storageChars);
+
+    const char* encPathChars = env->GetStringUTFChars(encryptedPath, nullptr);
+    const char* decPathChars = env->GetStringUTFChars(decryptedPath, nullptr);
+    
+    try {
+        DSSE FAST_;
+        FAST_.Setup(sPath);
+        SecByteBlock key = FAST_.Get_Client_sk();
+        
+        decryptFile(key, std::string(encPathChars), std::string(decPathChars));
+        
+        env->ReleaseStringUTFChars(encryptedPath, encPathChars);
+        env->ReleaseStringUTFChars(decryptedPath, decPathChars);
+        return JNI_TRUE;
+    } catch (const std::exception& e) {
+        LOGI("Decryption error: %s", e.what());
+        env->ReleaseStringUTFChars(encryptedPath, encPathChars);
+        env->ReleaseStringUTFChars(decryptedPath, decPathChars);
+        return JNI_FALSE;
+    }
 }
 
 extern "C" JNIEXPORT jobjectArray JNICALL
 Java_com_example_pi_SearchActivity_getSearchToken(
         JNIEnv* env,
         jobject /* this */,
+        jstring storagePath,
         jstring keyword) {
     
+    const char* storageChars = env->GetStringUTFChars(storagePath, nullptr);
+    std::string sPath(storageChars);
+    env->ReleaseStringUTFChars(storagePath, storageChars);
+
     const char* keywordChars = env->GetStringUTFChars(keyword, nullptr);
-    auto result = queen_search_client(std::string(keywordChars), g_storagePath);
+    auto result = queen_search_client(std::string(keywordChars), sPath);
     env->ReleaseStringUTFChars(keyword, keywordChars);
     
     jclass stringClass = env->FindClass("java/lang/String");
@@ -128,10 +189,16 @@ extern "C" JNIEXPORT jintArray JNICALL
 Java_com_example_pi_SearchActivity_performPostProcessing(
         JNIEnv* env,
         jobject /* this */,
+        jstring storagePath,
         jint indexRange,
         jstring res1_0, jstring res1_1,
         jstring res2_0, jstring res2_1) {
     
+    // storagePath not strictly used for post-processing currently but good for consistency
+    const char* storageChars = env->GetStringUTFChars(storagePath, nullptr);
+    std::string sPath(storageChars);
+    env->ReleaseStringUTFChars(storagePath, storageChars);
+
     const char* r10_b64 = env->GetStringUTFChars(res1_0, nullptr);
     const char* r11_b64 = env->GetStringUTFChars(res1_1, nullptr);
     const char* r20_b64 = env->GetStringUTFChars(res2_0, nullptr);

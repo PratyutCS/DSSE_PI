@@ -82,11 +82,11 @@ const getFiles = async (req, res) => {
 };
 
 const downloadFile = async (req, res) => {
-    const { dbName, fileName } = req.query;
+    const { dbName, fileId } = req.query;
     const user = req.user;
 
-    if (!dbName || !fileName) {
-        return res.status(400).json({ message: 'dbName and fileName are required' });
+    if (!dbName || !fileId) {
+        return res.status(400).json({ message: 'dbName and fileId (e.g. ID0) are required' });
     }
 
     try {
@@ -95,19 +95,23 @@ const downloadFile = async (req, res) => {
             return res.status(404).json({ message: 'Space not found' });
         }
 
-        const filePath = path.join(space.path, fileName);
+        const files = fs.readdirSync(space.path);
+        // Find a file that matches fileId exactly OR matches fileId + extension
+        const actualFileName = files.find(f => f.startsWith(fileId + ".") || f === fileId);
 
-        if (!fs.existsSync(filePath)) {
+        if (!actualFileName) {
+            console.log(`[File] Not found matching: ${fileId} in ${space.path}`);
             return res.status(404).json({ message: 'File not found' });
         }
 
-        // Security check: ensure filePath is within space.path to prevent directory traversal
-        // (path.join handles normal '..' resolution but let's be safe if user input is malicious)
+        const filePath = path.join(space.path, actualFileName);
+
+        // Security check: ensure filePath is within space.path
         if (!filePath.startsWith(space.path)) {
             return res.status(403).json({ message: 'Access denied' });
         }
 
-        res.download(filePath, fileName, (err) => {
+        res.download(filePath, actualFileName, (err) => {
             if (err) {
                 console.error('Download error:', err);
                 // Response might have partially sent, so checks are limited here

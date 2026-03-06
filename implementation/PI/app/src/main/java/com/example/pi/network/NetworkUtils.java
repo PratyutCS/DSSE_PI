@@ -97,6 +97,46 @@ public class NetworkUtils {
 
         return readResponse(conn);
     }
+    public static String downloadFile(String requestUrl, String destinationDir, String authToken) throws Exception {
+        URL url = new URL(requestUrl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        if (authToken != null) {
+            conn.setRequestProperty("Authorization", "Bearer " + authToken);
+        }
+        conn.connect();
+
+        if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            throw new Exception("HTTP error code: " + conn.getResponseCode());
+        }
+
+        // Try to get filename from Content-Disposition header
+        String fileName = null;
+        String disposition = conn.getHeaderField("Content-Disposition");
+        if (disposition != null && disposition.indexOf("filename=") > 0) {
+            fileName = disposition.substring(disposition.indexOf("filename=") + 9);
+            // Remove quotes if present
+            if (fileName.startsWith("\"") && fileName.endsWith("\"")) {
+                fileName = fileName.substring(1, fileName.length() - 1);
+            }
+        }
+
+        // Fallback to URL's name if header fails
+        if (fileName == null) {
+            fileName = "downloaded_file_" + System.currentTimeMillis();
+        }
+
+        File destinationFile = new File(destinationDir, fileName);
+        try (java.io.InputStream is = conn.getInputStream();
+             java.io.FileOutputStream os = new java.io.FileOutputStream(destinationFile)) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+        }
+        return fileName;
+    }
 
     private static String readResponse(HttpURLConnection conn) throws Exception {
         int responseCode = conn.getResponseCode();

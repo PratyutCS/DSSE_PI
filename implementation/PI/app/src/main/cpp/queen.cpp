@@ -13,18 +13,40 @@
 using namespace std;
 
 // This function calculates the update tokens for the server
-vector<tuple<string, string>> queen_process(vector<tuple<string, int>> &inp, const string &storage_path) {
+vector<tuple<string, string>> queen_process(vector<tuple<string, int>> &inp, const string &storage_path, vector<string> &encrypted_paths) {
     LOGI("Queen redirecting to DBConversion. Input size: %zu", inp.size());
     
-    // 1. Convert input to index/keyword pairs
+    // 1. Convert input to index/keyword pairs. This also sorts inp by keyword.
     auto result = DBConversion(inp);
     
-    LOGI("DBConversion complete. Result size: %zu", result.size());
+    LOGI("DBConversion complete. Sorted input size: %zu", inp.size());
 
-    // 2. Initialize DSSE to generate tokens
+    // 2. Encrypt and rename files according to their sorted order (ID0, ID1, etc.)
     DSSE FAST_;
-    FAST_.Setup(storage_path); // Use the provided storage path
+    FAST_.Setup(storage_path);
+    SecByteBlock key = FAST_.Get_Client_sk();
+
+    // Create encrypted directory if not exists
+    string enc_dir = storage_path + "/encrypted";
+    // system(("mkdir -p " + enc_dir).c_str()); // This is simple but maybe not fully portable. Android mkdir might be better but this usually works.
     
+    encrypted_paths.clear();
+    for (size_t i = 0; i < inp.size(); i++) {
+        string original_path = get<0>(inp[i]);
+        
+        // Extract extension if any
+        size_t last_dot = original_path.find_last_of(".");
+        string ext = (last_dot != string::npos) ? original_path.substr(last_dot) : "";
+        
+        string filename = "ID" + to_string(i) + ext;
+        string new_path = enc_dir + "/" + filename;
+        
+        LOGI("Encrypting file %s to %s", original_path.c_str(), new_path.c_str());
+        encryptFile(key, original_path, new_path);
+        encrypted_paths.push_back(new_path);
+    }
+
+    // 3. Initialize DSSE to generate tokens
     vector<tuple<string, string>> u_List;
 
     for(size_t i=0 ; i<result.size() ; i++){

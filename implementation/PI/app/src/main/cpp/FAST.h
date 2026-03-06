@@ -18,6 +18,7 @@
 #include <cryptopp/filters.h>
 #include <cryptopp/modes.h>
 #include <cryptopp/secblock.h>
+#include <cryptopp/files.h>
 
 #include <rocksdb/db.h>
 #include <rocksdb/options.h>
@@ -31,6 +32,9 @@ using namespace CryptoPP;
 
 void encryptAES(const SecByteBlock &key, const string &plaintext, string &ciphertext); 
 void decryptAES(const SecByteBlock &key, const string &ciphertext, string &plaintext); 
+
+void encryptFile(const SecByteBlock &key, const string &inputPath, const string &outputPath);
+void decryptFile(const SecByteBlock &key, const string &inputPath, const string &outputPath);
 
 string SecByteBlockToString(const SecByteBlock& block);
 SecByteBlock StringToSecByteBlock(const string& str); 

@@ -56,16 +56,34 @@ int Retrive_tupple_DB(rocksdb::DB *map, const string &keyword, string &st, int &
 
 void encryptAES(const SecByteBlock &key, const string &plaintext, string &ciphertext) 
 {
-    ECB_Mode<AES>::Encryption encryptor;
-    encryptor.SetKey(key, key.size());
+    CryptoPP::byte iv[AES::BLOCKSIZE] = {0};
+    CBC_Mode<AES>::Encryption encryptor;
+    encryptor.SetKeyWithIV(key, key.size(), iv);
     StringSource(plaintext, true, new StreamTransformationFilter(encryptor, new StringSink(ciphertext), BlockPaddingSchemeDef::NO_PADDING));
 }
 
 void decryptAES(const SecByteBlock &key, const string &ciphertext, string &plaintext) 
 {
-    ECB_Mode<AES>::Decryption decryptor;
-    decryptor.SetKey(key, key.size());
-    StringSource(ciphertext, true, new StreamTransformationFilter(decryptor, new StringSink(plaintext),  BlockPaddingSchemeDef::NO_PADDING));
+    CryptoPP::byte iv[AES::BLOCKSIZE] = {0};
+    CBC_Mode<AES>::Decryption decryptor;
+    decryptor.SetKeyWithIV(key, key.size(), iv);
+    StringSource(ciphertext, true, new StreamTransformationFilter(decryptor, new StringSink(plaintext), BlockPaddingSchemeDef::NO_PADDING));
+}
+
+void encryptFile(const SecByteBlock &key, const string &inputPath, const string &outputPath)
+{
+    CryptoPP::byte iv[AES::BLOCKSIZE] = {0};
+    CBC_Mode<AES>::Encryption encryptor;
+    encryptor.SetKeyWithIV(key, key.size(), iv);
+    FileSource(inputPath.c_str(), true, new StreamTransformationFilter(encryptor, new FileSink(outputPath.c_str())));
+}
+
+void decryptFile(const SecByteBlock &key, const string &inputPath, const string &outputPath)
+{
+    CryptoPP::byte iv[AES::BLOCKSIZE] = {0};
+    CBC_Mode<AES>::Decryption decryptor;
+    decryptor.SetKeyWithIV(key, key.size(), iv);
+    FileSource(inputPath.c_str(), true, new StreamTransformationFilter(decryptor, new FileSink(outputPath.c_str())));
 }
 
 string SecByteBlockToString(const SecByteBlock& block) 
