@@ -121,14 +121,14 @@ public class SearchActivity extends AppCompatActivity {
 
         executor.execute(() -> {
             try {
-                String storagePath = getFilesDir().getAbsolutePath();
+                String storagePath = getDbStoragePath(dbName);
                 
                 // 0. Cleanup previous searches
                 File publicDecryptedDir = new File(Environment.getExternalStorageDirectory(), "PI_SearchResults");
                 clearDirectories(new File(getFilesDir(), "downloads"), publicDecryptedDir);
                 
                 // 1. Get tokens for param 1
-                Log.i("PI_SEARCH", "Generating token for P1: " + p1);
+                Log.i("PI_SEARCH", "Generating token for P1: " + p1 + " using DB storage: " + storagePath);
                 String[] tokens1 = getSearchToken(storagePath, p1);
                 Log.i("PI_SEARCH", "P1 Tokens: u=" + tokens1[0] + ", count=" + tokens1[2]);
                 
@@ -176,7 +176,7 @@ public class SearchActivity extends AppCompatActivity {
                     String downloadedFileName = NetworkUtils.downloadFile(downloadUrl, downloadDir.getAbsolutePath(), token);
                     
                     File encFile = new File(downloadDir, downloadedFileName);
-                    File decFile = new File(decryptedDir, downloadedFileName.replace(fileId, fileId + "_decrypted"));
+                    File decFile = new File(decryptedDir, downloadedFileName);
 
                     Log.i("PI_SEARCH", "Decrypting " + downloadedFileName);
                     boolean success = decryptResultFile(storagePath, encFile.getAbsolutePath(), decFile.getAbsolutePath());
@@ -220,6 +220,12 @@ public class SearchActivity extends AppCompatActivity {
                 handler.post(() -> Toast.makeText(this, "Search failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
         });
+    }
+
+    private String getDbStoragePath(String dbName) {
+        File dbDir = new File(getFilesDir(), dbName);
+        if (!dbDir.exists()) dbDir.mkdirs();
+        return dbDir.getAbsolutePath();
     }
 
     private void clearDirectories(File... dirs) {

@@ -19,6 +19,8 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.database.Cursor;
+import android.provider.OpenableColumns;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -164,9 +166,9 @@ public class UpdateActivity extends AppCompatActivity {
                 File encryptedDir = new File(storageBase, "encrypted");
                 if (!encryptedDir.exists()) encryptedDir.mkdirs();
 
-                // 2. Generate Tokens via JNI
-                System.out.println("[UPDATE PI] tokens and encrypted files generating");
-                String storagePath = getFilesDir().getAbsolutePath();
+                // 2. Generate Tokens via JNI with isolated DB storage path
+                System.out.println("[UPDATE PI] tokens and encrypted files generating for DB: " + dbName);
+                String storagePath = getDbStoragePath(dbName);
                 String[] jniResult = generateTokens(storagePath, paths, keywords);
                 System.out.println("[UPDATE PI] tokens and encrypted files generated");
                 
@@ -377,11 +379,32 @@ public class UpdateActivity extends AppCompatActivity {
         checkUpdateState();
     }
 
+    private String getDbStoragePath(String dbName) {
+        File dbDir = new File(getFilesDir(), dbName);
+        if (!dbDir.exists()) dbDir.mkdirs();
+        return dbDir.getAbsolutePath();
+    }
+
     private String getFileNameFromUri(Uri uri) {
-        String path = uri.getPath();
-        int cut = path.lastIndexOf('/');
-        if (cut != -1) path = path.substring(cut + 1);
-        return path;
+        String result = null;
+        if (uri.getScheme() != null && uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (index != -1) {
+                        result = cursor.getString(index);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result != null ? result.lastIndexOf('/') : -1;
+            if (cut != -1) result = result.substring(cut + 1);
+        }
+        return result;
     }
 
     private void fetchEmptySpaces() {

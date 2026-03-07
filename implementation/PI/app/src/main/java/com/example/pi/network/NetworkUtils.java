@@ -113,17 +113,28 @@ public class NetworkUtils {
         // Try to get filename from Content-Disposition header
         String fileName = null;
         String disposition = conn.getHeaderField("Content-Disposition");
-        if (disposition != null && disposition.indexOf("filename=") > 0) {
-            fileName = disposition.substring(disposition.indexOf("filename=") + 9);
-            // Remove quotes if present
-            if (fileName.startsWith("\"") && fileName.endsWith("\"")) {
-                fileName = fileName.substring(1, fileName.length() - 1);
+        if (disposition != null) {
+            String[] params = disposition.split(";");
+            for (String param : params) {
+                param = param.trim();
+                if (param.startsWith("filename=")) {
+                    fileName = param.substring(9).replace("\"", "");
+                    break;
+                } else if (param.startsWith("filename*=")) {
+                    // Handle RFC 5987 encoded filenames if needed
+                    String[] parts = param.split("''");
+                    if (parts.length == 2) fileName = parts[1];
+                }
             }
         }
 
-        // Fallback to URL's name if header fails
+        // Fallback to URL's name or fileId if header fails
         if (fileName == null) {
-            fileName = "downloaded_file_" + System.currentTimeMillis();
+            android.net.Uri uri = android.net.Uri.parse(requestUrl);
+            fileName = uri.getQueryParameter("fileId");
+            if (fileName == null) {
+                fileName = "downloaded_file_" + System.currentTimeMillis();
+            }
         }
 
         File destinationFile = new File(destinationDir, fileName);

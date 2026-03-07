@@ -3,6 +3,8 @@
 #include <string>
 #include <tuple>
 #include <android/log.h>
+#include <sys/stat.h>
+#include <errno.h>
 #include "v2.cpp"
 #include "FAST.h"
 #include "BitSequence.cpp"
@@ -28,18 +30,26 @@ vector<tuple<string, string>> queen_process(vector<tuple<string, int>> &inp, con
 
     // Create encrypted directory if not exists
     string enc_dir = storage_path + "/encrypted";
-    // system(("mkdir -p " + enc_dir).c_str()); // This is simple but maybe not fully portable. Android mkdir might be better but this usually works.
+    if (mkdir(enc_dir.c_str(), 0777) == -1) {
+        if (errno != EEXIST) {
+            LOGI("Warning: Could not create directory %s (errno: %d)", enc_dir.c_str(), errno);
+        }
+    }
     
     encrypted_paths.clear();
     for (size_t i = 0; i < inp.size(); i++) {
         string original_path = get<0>(inp[i]);
         
-        // Extract extension if any
-        size_t last_dot = original_path.find_last_of(".");
-        string ext = (last_dot != string::npos) ? original_path.substr(last_dot) : "";
+        // Extract filename from path
+        size_t last_slash = original_path.find_last_of("/");
+        string filename_only = (last_slash != string::npos) ? original_path.substr(last_slash + 1) : original_path;
+
+        // Extract extension from filename
+        size_t last_dot = filename_only.find_last_of(".");
+        string ext = (last_dot != string::npos) ? filename_only.substr(last_dot) : "";
         
-        string filename = "ID" + to_string(i) + ext;
-        string new_path = enc_dir + "/" + filename;
+        string new_filename = "ID" + to_string(i) + ext;
+        string new_path = enc_dir + "/" + new_filename;
         
         LOGI("Encrypting file %s to %s", original_path.c_str(), new_path.c_str());
         encryptFile(key, original_path, new_path);
