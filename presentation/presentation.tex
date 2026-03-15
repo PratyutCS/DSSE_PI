@@ -140,6 +140,37 @@
     \end{columns}
 \end{frame}
 
+\begin{frame}{Cryptographic Core: The FAST Scheme}
+    \begin{columns}
+        \begin{column}{0.65\textwidth}
+            \begin{itemize}
+                \item \textbf{C++ \& NDK}: High performance native cryptographic routines using \texttt{Crypto++}.
+                \item \textbf{Master Key Derivation}: Initial AES-256 keys generate subsequent sub-keys via Pseudo-Random Number Generators (PRNG).
+                \item \textbf{HMAC-SHA256}: Encrypts both the file paths and search keywords into Trapdoor Tokens.
+                \item \textbf{Local Counters}: Phone retains state integers via a local RocksDB preventing duplicate tokens.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.35\textwidth}
+            \includegraphics[width=\textwidth]{crypto_core.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Multi-Tenant Storage Isolation}
+    \begin{columns}
+        \begin{column}{0.65\textwidth}
+            \begin{itemize}
+                \item \textbf{Complete Compartmentalization}: Each user's database is a 100\% physically separate folder on the Linux server filesystem.
+                \item \textbf{JWT $\rightarrow$ UID Mapping}: The API extracts the authenticated UID from the Bearer Token, never trusting the client's payload.
+                \item \textbf{MongoDB Lookup}: The DBSpace schema strictly links the requested database name to the verified UID to extract the true absolute path (\texttt{/storage/uid\_XYZ/dbname/}).
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.35\textwidth}
+            \includegraphics[width=\textwidth]{tenant_isolation.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
 \begin{frame}{App Functionality Summary}
     \begin{enumerate}
         \item \textbf{Login}: Secure JWT session establishment.
