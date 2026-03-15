@@ -1,0 +1,15 @@
+digraph G {
+    ratio="1.0";
+    rankdir=TB;
+    node [shape=record, style=filled, fontname="Arial", width=2.8, height=1.2, fontsize=14];
+    
+    UI [label="Android Java UI|{Auth (JWT)|Spaces (Isolated)|File Selection}", fillcolor="#3498db", fontcolor=white];
+    NDK [label="C++ NDK Bridge|{JNI Native Calls|Pointer Management|Local Storage Pathing}", fillcolor="#2980b9", fontcolor=white];
+    CORE [label="PI Core (Crypto++)|{AES-128 Encryption|FAST Token Gen|BitSequence Math}", fillcolor="#1f618d", fontcolor=white];
+    
+    UI -> NDK -> CORE;
+    
+    Server [label="Node.js Server|{Batch Processing|Isolated RocksDB|Encrypted FS}", fillcolor="#27ae60", fontcolor=white];
+    
+    CORE -> Server [label="Secure REST (TLS)", fontsize=12];
+}

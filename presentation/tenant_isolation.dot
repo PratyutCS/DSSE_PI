@@ -1,0 +1,21 @@
+digraph G {
+    rankdir=TB;
+    ratio=1.0;
+    dpi=300;
+    node [shape=box, style="filled,rounded", fillcolor=lightblue, fontname="Arial", fontsize=28, margin="0.3,0.3"];
+    edge [fontname="Arial", fontsize=22, penwidth=3.0];
+    
+    UserA [label="User A\n(JWT: A)", shape=ellipse, fillcolor=lightgreen];
+    UserB [label="User B\n(JWT: B)", shape=ellipse, fillcolor=lightpink];
+    
+    Mongo [label="MongoDB Maps\nUserId -> Paths", shape=cylinder, fillcolor=lightyellow];
+    
+    StorageA [label="/storage/uid_A/\n(RocksDB + Files)", shape=folder];
+    StorageB [label="/storage/uid_B/\n(RocksDB + Files)", shape=folder];
+    
+    UserA -> Mongo [label=" Lookup ", color=darkgreen];
+    UserB -> Mongo [label=" Lookup ", color=red];
+    
+    Mongo -> StorageA [color=darkgreen];
+    Mongo -> StorageB [color=red];
+}

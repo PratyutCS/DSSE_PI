@@ -1,0 +1,16 @@
+digraph DB_COMP {
+    ratio="1.0";
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial", width=2, height=1.5];
+    
+    RocksDB [label="RocksDB\n(Index Engine)", fillcolor="#e67e22", fontcolor=white];
+    CryptoPP [label="Crypto++\n(AES/SHA)", fillcolor="#34495e", fontcolor=white];
+    
+    App [label="Android App", fillcolor="#3498db", fontcolor=white];
+    Server [label="Node.js Server", fillcolor="#2ecc71", fontcolor=white];
+    
+    App -> CryptoPP;
+    App -> RocksDB;
+    Server -> CryptoPP;
+    Server -> RocksDB;
+}

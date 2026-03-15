@@ -1,0 +1,12 @@
+digraph LOGIC {
+    ratio="1.0";
+    rankdir=TB;
+    node [shape=record, style=filled, fontname="Arial", width=2.8, height=1.5, fontsize=14];
+    
+    A [label="{Param 1|GE(10)}", fillcolor="#3498db", fontcolor=white];
+    B [label="{Param 2|LE(50)}", fillcolor="#2ecc71", fontcolor=white];
+    C [label="{Result|Intersection}", fillcolor="#f1c40f", fontcolor=black];
+    
+    A -> C;
+    B -> C;
+}

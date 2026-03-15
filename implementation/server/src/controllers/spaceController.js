@@ -95,6 +95,9 @@ const getSpaces = async (req, res) => {
         // If uninitialized filter is requested
         if (uninitialized === 'true') {
             const filteredSpaces = spaces.filter(space => {
+                // If it's explicitly locked, it's NOT uninitialized
+                if (space.isLocked) return false;
+                
                 if (fs.existsSync(space.path)) {
                     const files = fs.readdirSync(space.path);
                     return files.length === 0;
@@ -112,4 +115,23 @@ const getSpaces = async (req, res) => {
     }
 };
 
-module.exports = { createSpace, deleteSpace, getSpaces };
+const lockSpace = async (req, res) => {
+    const { dbName } = req.body;
+    const user = req.user;
+
+    if (!dbName) return res.status(400).json({ message: 'dbName is required' });
+
+    try {
+        const space = await DBSpace.findOne({ owner: user._id, dbName: dbName });
+        if (!space) return res.status(404).json({ message: 'Space not found' });
+
+        space.isLocked = true;
+        await space.save();
+        res.json({ message: 'Database space successfully locked against future updates' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error locking space' });
+    }
+}
+
+module.exports = { createSpace, deleteSpace, getSpaces, lockSpace };

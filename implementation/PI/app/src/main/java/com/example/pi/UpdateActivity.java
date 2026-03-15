@@ -57,6 +57,10 @@ public class UpdateActivity extends AppCompatActivity {
     private FileSelectionAdapter adapter;
     private List<FileSelection> selectedFiles = new ArrayList<>();
 
+    private android.widget.LinearLayout progressContainer;
+    private android.widget.ProgressBar progressBarUpdate;
+    private TextView tvProgressStatus;
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private static final String PREFS_NAME = "pi_prefs";
@@ -76,6 +80,10 @@ public class UpdateActivity extends AppCompatActivity {
         btnAddFile = findViewById(R.id.btnAddFile);
         tvEmptyMessage = findViewById(R.id.tvEmptyMessage);
         rvFiles = findViewById(R.id.rvFiles);
+
+        progressContainer = findViewById(R.id.progressContainer);
+        progressBarUpdate = findViewById(R.id.progressBarUpdate);
+        tvProgressStatus = findViewById(R.id.tvProgressStatus);
 
         // Initially disable file adding and update button until DB is selected
         btnAddFile.setEnabled(false);
@@ -141,7 +149,9 @@ public class UpdateActivity extends AppCompatActivity {
         }
 
         setUIEnabled(false);
-        Toast.makeText(this, "Generating tokens and updating database...", Toast.LENGTH_SHORT).show();
+        progressContainer.setVisibility(View.VISIBLE);
+        tvProgressStatus.setText("Generating Tokens & Encrypting Files...");
+        progressBarUpdate.setProgress(0);
         
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
@@ -179,10 +189,21 @@ public class UpdateActivity extends AppCompatActivity {
                 int tokenCount = 200000;
                 int tokenEntries = tokenCount * 2;
                 
+                int BATCH_SIZE = 5000;
+                int UPLOAD_BATCH_SIZE = 5;
+                int totalTokenBatches = (int) Math.ceil((double) tokenCount / BATCH_SIZE);
+                int totalFileBatches = (int) Math.ceil((double) selectedFiles.size() / UPLOAD_BATCH_SIZE);
+                int totalSteps = 1 + totalTokenBatches + totalFileBatches;
+                int[] currentStep = {1}; // 1 = JNI generation done
+                
+                handler.post(() -> {
+                    progressBarUpdate.setMax(totalSteps);
+                    progressBarUpdate.setProgress(currentStep[0]);
+                });
+                
                 // 3. Send tokens in batches to server via bulk endpoint
                 System.out.println("[UPDATE PI] sending tokens to server");
                 if (jniResult != null && jniResult.length >= tokenEntries) {
-                    int BATCH_SIZE = 5000;
                     
                     for (int batchStart = 0; batchStart < tokenCount; batchStart += BATCH_SIZE) {
                         int batchEnd = Math.min(batchStart + BATCH_SIZE, tokenCount);
@@ -199,40 +220,65 @@ public class UpdateActivity extends AppCompatActivity {
                         body.put("dbName", dbName);
                         body.put("pairs", pairsArray);
                         
-                        Log.i("PI_UPDATE", "Sending token batch " + (batchStart / BATCH_SIZE + 1));
+                        final int currentBatchNum = (batchStart / BATCH_SIZE) + 1;
+                        handler.post(() -> {
+                            tvProgressStatus.setText("Uploading Tokens (Batch " + currentBatchNum + " of " + totalTokenBatches + ")");
+                        });
+                        
+                        Log.i("PI_UPDATE", "Sending token batch " + currentBatchNum);
                         NetworkUtils.performPostRequest(baseUrl + "/bulk-save-index_value", body.toString(), token);
+                        
+                        currentStep[0]++;
+                        handler.post(() -> progressBarUpdate.setProgress(currentStep[0]));
                     }
                     Log.i("PI_UPDATE", "All token batches sent successfully");
                 }
                 
-                // 4. Upload encrypted files to server
-                System.out.println("[UPDATE PI] uploading encrypted files to server");
+                // 4. Upload encrypted files to server in batches
+                System.out.println("[UPDATE PI] uploading encrypted files to server in batches");
                 List<String> encryptedPathsList = new ArrayList<>();
                 if (jniResult != null && jniResult.length > tokenEntries) {
                     for (int i = tokenEntries; i < jniResult.length; i++) {
                         encryptedPathsList.add(jniResult[i]);
                     }
-                    NetworkUtils.performMultipartRequest(baseUrl + "/upload_files", dbName, encryptedPathsList, token);
+                    for (int i = 0; i < encryptedPathsList.size(); i += UPLOAD_BATCH_SIZE) {
+                        int end = Math.min(i + UPLOAD_BATCH_SIZE, encryptedPathsList.size());
+                        List<String> batchPaths = encryptedPathsList.subList(i, end);
+                        
+                        final int currentFileBatchNum = (i / UPLOAD_BATCH_SIZE) + 1;
+                        handler.post(() -> {
+                            tvProgressStatus.setText("Uploading Files (Batch " + currentFileBatchNum + " of " + totalFileBatches + ")");
+                        });
+                        
+                        Log.i("PI_UPDATE", "Uploading file batch " + currentFileBatchNum);
+                        NetworkUtils.performMultipartRequest(baseUrl + "/upload_files", dbName, batchPaths, token);
+                        
+                        currentStep[0]++;
+                        handler.post(() -> progressBarUpdate.setProgress(currentStep[0]));
+                    }
                 }
                 System.out.println("[UPDATE PI] encrypted files uploaded to server");
                 
-                // 5. Cleanup encrypted files from device
+                // 5. Lock the server database permanently
+                JSONObject lockBody = new JSONObject();
+                lockBody.put("dbName", dbName);
+                NetworkUtils.performPostRequest(baseUrl + "/lock-space", lockBody.toString(), token);
+                
+                // 6. Cleanup encrypted files from device
                 for (String path : encryptedPathsList) {
                     new File(path).delete();
                 }
                 
                 handler.post(() -> {
-                    setUIEnabled(true);
-                    selectedFiles.clear();
-                    adapter.notifyDataSetChanged();
-                    checkUpdateState();
-                    Toast.makeText(this, "Update complete!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Update complete! Database initialized.", Toast.LENGTH_LONG).show();
+                    finish(); // Force close the page to prevent re-uploading to the same DB
                 });
                 
             } catch (Exception e) {
                 e.printStackTrace();
                 handler.post(() -> {
                     setUIEnabled(true);
+                    progressContainer.setVisibility(View.GONE);
                     Toast.makeText(this, "Update failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             }

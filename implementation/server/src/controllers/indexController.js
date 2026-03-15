@@ -4,9 +4,10 @@ const fs = require('fs');
 const path = require('path');
 
 // Helper to resolve dbPath from request
-const getDbPath = async (user, dbName) => {
+const getDbPath = async (user, dbName, requireUnlocked = false) => {
     const space = await DBSpace.findOne({ owner: user._id, dbName: dbName });
     if (!space) throw new Error('Database Space not found');
+    if (requireUnlocked && space.isLocked) throw new Error('Database Space is locked against further modifications');
     return space.path;
 }
 
@@ -42,7 +43,7 @@ const saveIndexValue = async (req, res) => {
     }
 
     try {
-        const dbPath = await getDbPath(req.user, dbName);
+        const dbPath = await getDbPath(req.user, dbName, true);
 
         await rocksdbService.updateIndex(dbPath, key, value);
         res.json({ message: 'Value saved successfully' });
@@ -62,7 +63,7 @@ const bulkSaveIndexValue = async (req, res) => {
     }
 
     try {
-        const dbPath = await getDbPath(req.user, dbName);
+        const dbPath = await getDbPath(req.user, dbName, true);
 
         const result = await rocksdbService.bulkUpdateIndex(dbPath, pairs);
         console.log(`[BulkUpdate] ${pairs.length} entries saved to ${dbName}: ${result}`);

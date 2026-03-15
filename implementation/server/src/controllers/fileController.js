@@ -25,11 +25,14 @@ const storage = multer.diskStorage({
             return cb(new Error('dbName is required for upload'), null);
         }
 
-        // Verify Space ownership
+        // Verify Space ownership and lock status
         try {
             const space = await DBSpace.findOne({ owner: user._id, dbName: dbName });
             if (!space) {
                 return cb(new Error('Space not found or access denied'), null);
+            }
+            if (space.isLocked) {
+                return cb(new Error('Database Space is completely locked. No further documents can be uploaded.'), null);
             }
             cb(null, space.path);
         } catch (e) {

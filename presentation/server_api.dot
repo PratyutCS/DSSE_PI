@@ -1,0 +1,18 @@
+digraph G {
+    rankdir=TB;
+    ratio=1.0;
+    dpi=300;
+    node [shape=record, style=filled, fillcolor=white, fontname="Arial", fontsize=28, margin="0.3,0.3"];
+    edge [fontname="Arial", fontsize=22, penwidth=3.0];
+    
+    API [label="<f0> Express API Router | <f1> /api/login & /register | <f2> /api/new & /delete | <f3> /api/save-index | <f4> /api/upload_files", fillcolor=lightgrey];
+    
+    MongoDB [shape=cylinder, label="MongoDB\n(Sessions & Meta)", fillcolor=lightyellow];
+    RocksDB [shape=cylinder, label="RocksDB\n(Subprocess C++)", fillcolor=lightpink];
+    Files [shape=folder, label="Disk Storage\n(/storage/uid/dbname)", fillcolor=lightblue];
+    
+    API:f1 -> MongoDB [label="JWT Session"];
+    API:f2 -> MongoDB [label="DBSpace Configs"];
+    API:f3 -> RocksDB [label="Index Update/Search"];
+    API:f4 -> Files [label="Save Blobs"];
+}

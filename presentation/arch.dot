@@ -1,0 +1,31 @@
+digraph G {
+    ratio="1.0";
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial", width=2.5, height=1.2, fontsize=14];
+    edge [fontsize=12];
+    
+    subgraph cluster_android {
+        label = "Android Mobile (Private Keys)";
+        color = "#2c3e50";
+        style = dashed;
+        fontsize=16;
+        UI [label="User UI", fillcolor="#3498db", fontcolor=white];
+        KeyMgr [label="Unique Key Per Space\n(private_key.bin)", fillcolor="#e74c3c", fontcolor=white];
+        Crypto [label="PI Engine", fillcolor="#1f618d", fontcolor=white];
+        UI -> KeyMgr -> Crypto;
+    }
+    
+    subgraph cluster_server {
+        label = "PI Server (Isolated Spaces)";
+        color = "#27ae60";
+        style = dashed;
+        fontsize=16;
+        API [label="API Middleware", fillcolor="#2ecc71", fontcolor=white];
+        SpaceAlpha [label="Space Alpha", fillcolor="#27ae60", fontcolor=white];
+        SpaceBeta [label="Space Beta", fillcolor="#1e8449", fontcolor=white];
+        API -> SpaceAlpha;
+        API -> SpaceBeta;
+    }
+    
+    Crypto -> API [label="AUTH + DATA"];
+}

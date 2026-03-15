@@ -1,0 +1,158 @@
+\documentclass{beamer}
+\usetheme{Madrid}
+\usecolortheme{whale}
+
+\usepackage[utf8]{inputenc}
+\usepackage{bookmark}
+\usepackage{graphicx}
+
+\title{PI Protocol: Fullstack Privacy}
+\subtitle{Logic Chaining \& Feature Implementation}
+\author{Deep Dive Overview}
+\date{March 2026}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}{The Logic Chain: Data Journey}
+    \begin{columns}
+        \begin{column}{0.45\textwidth}
+            How data moves safely:
+            \begin{itemize}
+                \item \textbf{Selection}: Java layer selects files/keywords.
+                \item \textbf{Processing}: NDK invokes C++ PI Engine.
+                \item \textbf{Tokenization}: FAST scheme generates 200k tokens.
+                \item \textbf{Batched Sync}: Tokens sent in chunks of 5,000.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.55\textwidth}
+            \includegraphics[width=\textwidth]{logic_chain_prog.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\section{Core Implementation Features}
+\begin{frame}{Isolated Secure Spaces}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \textbf{Zero-Trust Isolation}:
+            \begin{itemize}
+                \item \textbf{Physical Separation}: Every space has a unique RocksDB + FS folder.
+                \item \textbf{Unique Keys}: Private keys generated per-space; never leave the phone.
+                \item \textbf{Session Security}: JWT authentication protects all space interactions.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \includegraphics[width=\textwidth]{arch_prog.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Advanced Update \& Metadata}
+    \begin{itemize}
+        \item \textbf{Extension Preservation}: Encrypts \texttt{doc.pdf} to \texttt{ID0.pdf}. The server knows the extension (so storage works) but not the content.
+        \item \textbf{Payload Batching}: The App prevents Out-Of-Memory (OOM) network crashes by chunking uploads into exactly 5,000-token arrays and 5-file bundles per HTTP POST.
+        \item \textbf{Local State Management}: The phone tracks indexing state locally in a mini-RocksDB to prevent token collision.
+    \end{itemize}
+    \begin{center}
+        \includegraphics[height=0.4\textheight]{scheme_prog.png}
+    \end{center}
+\end{frame}
+
+\begin{frame}{Private Search Strategy}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \includegraphics[width=0.9\textwidth]{logic_prog.png}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \textbf{How Range Queries Work}:
+            \begin{itemize}
+                \item \textbf{Trapdoors}: App generates 2 secure search tokens.
+                \item \textbf{Server Side}: Returns encrypted match sets.
+                \item \textbf{Intersection}: \texttt{BitSequence} logic on phone finds the final result.
+            \end{itemize}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Universal Android Support}
+    \begin{columns}
+        \begin{column}{0.6\textwidth}
+            \textbf{Multi-Core Stability}:
+            \begin{itemize}
+                \item Supports \textbf{arm64-v8a}, \textbf{v7a}, \textbf{x86}, and \textbf{x64}.
+                \item High-speed static C++ libraries linked via CMake.
+                \item Hardened JNI to prevent native crashes.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.4\textwidth}
+            \includegraphics[width=\textwidth]{archs_prog.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Server Architecture: Node.js Middleware}
+    \begin{columns}
+        \begin{column}{0.65\textwidth}
+            \begin{itemize}
+                \item \textbf{Role}: Acts as a secure REST middleware bridging the Android client with the C++ DSSE Core and File Storage.
+                \item \textbf{Decoupling}: Abstracts away complex command-line native executions (RocksDB) into predictable, standard REST calls.
+                \item \textbf{Native Integration}: Spawns \texttt{dsse\_server} child processes, feeding large batch updates via \texttt{stdin} streams to bypass OS command-line limits.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.35\textwidth}
+            \includegraphics[width=\textwidth]{server_arch.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{API Endpoints \& Security}
+    \begin{columns}
+        \begin{column}{0.55\textwidth}
+            \textbf{Endpoint Structure \& Purpose}:
+            \begin{itemize}
+                \item \textbf{Auth} (\texttt{/login}): JWT-based sessions in MongoDB.
+                \item \textbf{Space} (\texttt{/new}): Provisions isolated \texttt{DBSpace}.
+                \item \textbf{Index} (\texttt{/bulk-save}): Interacts with RocksDB for search/update.
+                \item \textbf{File} (\texttt{/upload}): Handles encrypted document blobs.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \includegraphics[width=\textwidth]{server_api.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{Security \& Edge Case Handling}
+    \begin{columns}
+        \begin{column}{0.65\textwidth}
+            \begin{itemize}
+                \item \textbf{Zero-Trust}: \texttt{protect} middleware validates JWT AND ownership.
+                \item \textbf{Immutable Locks}: Upon completion, the App triggers \texttt{/lock-space}. The API irrevocably sets \texttt{isLocked=true} in Mongo, physically preventing hackers from re-uploading and destroying the RocksDB index.
+                \item \textbf{Anti-Path Traversal}: Verifies \texttt{startsWith()} against \texttt{../} attacks.
+                \item \textbf{Dynamic Storage}: \texttt{multer} safely resolves path before bytes read.
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.35\textwidth}
+            \includegraphics[width=\textwidth]{server_sec.png}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}{App Functionality Summary}
+    \begin{enumerate}
+        \item \textbf{Login}: Secure JWT session establishment.
+        \item \textbf{Update}: Batch token generation \& file encryption.
+        \item \textbf{Search}: Range query intersection on encrypted data.
+        \item \textbf{Recovery}: Secure local decryption of search results.
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \begin{center}
+        \Huge{DEMO}
+    \end{center}
+\end{frame}
+
+\end{document}

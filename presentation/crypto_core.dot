@@ -1,0 +1,19 @@
+digraph G {
+    rankdir=TB;
+    ratio=1.0;
+    dpi=300;
+    node [shape=box, style="filled,rounded", fillcolor=lightyellow, fontname="Arial", fontsize=28, margin="0.3,0.3"];
+    edge [fontname="Arial", fontsize=22, penwidth=3.0];
+    
+    MasterKey [label="Master Key\n(AES-256)", shape=cylinder, fillcolor=lightpink];
+    PRNG [label="Cryptographic PRNG\n(Crypto++)"];
+    HMAC [label="HMAC-SHA256\n(Trapdoor Gen)"];
+    
+    Tokens [label="Search Tokens\n(Encrypted Queries)", shape=ellipse, fillcolor=lightblue];
+    State [label="Local RocksDB State\n(Counter Maps)", shape=folder, fillcolor=lightblue];
+    
+    MasterKey -> PRNG [label=" Seed "];
+    PRNG -> HMAC [label=" Sub-Keys "];
+    HMAC -> Tokens [label=" FAST Scheme "];
+    Tokens -> State [label=" Update Cnt" , color=blue];
+}

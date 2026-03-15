@@ -1,0 +1,23 @@
+digraph ARCHS {
+    ratio="1.0";
+    rankdir=TB;
+    node [shape=box, style=filled, fontname="Arial", width=2.5, height=1.2, fontsize=14];
+    
+    Android [label="Android App", fillcolor="#3498db", fontcolor=white];
+    
+    subgraph cluster_abis {
+        label = "Supported Architectures";
+        color = "#2c3e50";
+        style = dashed;
+        fontsize=16;
+        V8 [label="arm64-v8a\n(Modern Phones)", fillcolor="#2ecc71", fontcolor=white];
+        V7 [label="armeabi-v7a\n(Legacy)", fillcolor="#27ae60", fontcolor=white];
+        X86_64 [label="x86_64\n(Emulators/Tablets)", fillcolor="#f1c40f", fontcolor=black];
+        X86 [label="x86\n(Legacy Emulator)", fillcolor="#f39c12", fontcolor=black];
+    }
+    
+    Android -> V8;
+    Android -> V7;
+    Android -> X86_64;
+    Android -> X86;
+}

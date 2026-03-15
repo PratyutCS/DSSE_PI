@@ -1,0 +1,11 @@
+digraph PI_FLOW {
+    ratio="1.0";
+    rankdir=TB;
+    node [shape=record, style=filled, fontname="Arial", width=3, height=1.8, fontsize=14];
+
+    Init [label="{Step 0: Init Space|{New Space ID|Generate UNIQUE Key}}", fillcolor="#e74c3c", fontcolor=white];
+    Upload [label="{Step 1: Upload|{Enc with SpaceKey|Batch Store}}", fillcolor="#3498db", fontcolor=white];
+    Storage [label="{Step 2: Server|{Isolated RocksDB|Isolated FS}}", fillcolor="#2ecc71", fontcolor=white];
+
+    Init -> Upload -> Storage;
+}

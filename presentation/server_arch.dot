@@ -1,0 +1,25 @@
+digraph G {
+    rankdir=TB;
+    ratio=1.0;
+    dpi=300;
+    node [shape=box, style="filled,rounded", fillcolor=lightblue, fontname="Arial", fontsize=28, margin="0.3,0.3"];
+    edge [fontname="Arial", fontsize=22, penwidth=3.0];
+    
+    Android [label="Android Client\n(App)", shape=ellipse];
+    NodeJS [label="Node.js Server\nMiddleware\n(Express.js)", fillcolor=lightgreen];
+    
+    subgraph cluster_backend {
+        label="Server Infrastructure";
+        style=dashed;
+        fontname="Arial";
+        fontsize=28;
+        C_DSSE [label="C++ DSSE Core\n(Subprocess/stdin)", fillcolor=lightpink];
+        RocksDB [label="RocksDB\n(Index Storage)", shape=cylinder, fillcolor=white];
+        FileStorage [label="File Storage\n(Encrypted Blobs)", shape=folder, fillcolor=white];
+        C_DSSE -> RocksDB [label=" CRUD", color=purple];
+    }
+    
+    Android -> NodeJS [label=" JSON/REST\n(HTTP/JWT)", color=blue];
+    NodeJS -> C_DSSE [label=" Spawn / stdin\n(Batch args)", color=red];
+    NodeJS -> FileStorage [label=" multer JS FS", color=darkgreen];
+}

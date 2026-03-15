@@ -14,6 +14,10 @@ const dbSpaceSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    isLocked: {
+        type: Boolean,
+        default: false,
+    }
 }, { timestamps: true });
 
 // Compound index to ensure unique dbName per user

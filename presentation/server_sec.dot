@@ -1,0 +1,24 @@
+digraph G {
+    rankdir=TB;
+    ratio=1.0;
+    dpi=300;
+    node [shape=box, style="rounded,filled", fillcolor=lightyellow, fontname="Arial", fontsize=28, margin="0.3,0.3"];
+    edge [fontname="Arial", fontsize=22, penwidth=3.0];
+    
+    Req [label="Incoming\nAPI Request", shape=ellipse, fillcolor=lightgreen];
+    
+    JWT [label="JWT Verification\n(protect middleware)"];
+    Owner [label="DBSpace Ownership\n(userId == ownerId)"];
+    Traversal [label="Anti-Path Traversal\nstartswith(space.path)", fillcolor=lightcoral];
+    Multer [label="Dynamic Auth\n(multer Dest Resolve)", fillcolor=lightcoral];
+    
+    Result [label="Secure IO Action\n(Read/Write)", shape=ellipse, fillcolor=lightblue];
+    
+    Req -> JWT;
+    JWT -> Owner;
+    Owner -> Traversal [label=" Download\nFlow ", color=red];
+    Owner -> Multer [label=" Upload\nFlow ", color=red];
+    
+    Traversal -> Result;
+    Multer -> Result;
+}
