@@ -10,6 +10,10 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class NetworkUtils {
+    
+    public interface ProgressListener {
+        void onProgress(int progress);
+    }
 
     // Generic Request helper
     public static String performRequest(String requestUrl, String method, String jsonBody, String authToken) throws Exception {
@@ -97,7 +101,7 @@ public class NetworkUtils {
 
         return readResponse(conn);
     }
-    public static String downloadFile(String requestUrl, String destinationDir, String authToken) throws Exception {
+    public static String downloadFile(String requestUrl, String destinationDir, String authToken, ProgressListener listener) throws Exception {
         URL url = new URL(requestUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -137,13 +141,20 @@ public class NetworkUtils {
             }
         }
 
+        int fileLength = conn.getContentLength();
+        
         File destinationFile = new File(destinationDir, fileName);
         try (java.io.InputStream is = conn.getInputStream();
              java.io.FileOutputStream os = new java.io.FileOutputStream(destinationFile)) {
-            byte[] buffer = new byte[4096];
+            byte[] buffer = new byte[8192];
             int bytesRead;
+            long totalRead = 0;
             while ((bytesRead = is.read(buffer)) != -1) {
                 os.write(buffer, 0, bytesRead);
+                totalRead += bytesRead;
+                if (listener != null && fileLength > 0) {
+                    listener.onProgress((int) (totalRead * 100 / fileLength));
+                }
             }
         }
         return fileName;

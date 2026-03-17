@@ -12,13 +12,19 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Environment;
 import android.provider.Settings;
+import android.content.res.ColorStateList;
 import android.content.Intent;
 import android.os.Build;
+import android.webkit.MimeTypeMap;
+import androidx.core.content.FileProvider;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,7 +35,9 @@ import org.json.JSONObject;
 import java.io.File;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,8 +57,15 @@ public class SearchActivity extends AppCompatActivity {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
     
-    private TextView tvResultsTitle, tvResults;
+    private TextView tvResultsTitle, tvResultsSummary, tvCounter;
     private View svResults;
+    private LinearLayout llResults;
+    private Button btnDownload;
+    private CheckBox cbSelectAll;
+    private int[] currentMatchedIds;
+    private final List<Integer> selectedIds = new ArrayList<>();
+    private final List<CheckBox> idCheckboxes = new ArrayList<>();
+    private final Map<Integer, View> fileItemViews = new HashMap<>();
 
     private static final String PREFS_NAME = "pi_prefs";
 
@@ -68,14 +83,25 @@ public class SearchActivity extends AppCompatActivity {
         toolbarTitle.setText("PRIVATE SEARCH");
 
         tvResultsTitle = findViewById(R.id.tvResultsTitle);
-        tvResults = findViewById(R.id.tvResults);
+        tvResultsSummary = findViewById(R.id.tvResultsSummary);
         svResults = findViewById(R.id.svResults);
+        llResults = findViewById(R.id.llResults);
+        btnDownload = findViewById(R.id.btnDownload);
+        tvCounter = findViewById(R.id.tvCounter);
+        cbSelectAll = findViewById(R.id.cbSelectAll);
         
         View btnBack = findViewById(R.id.btnBack);
         btnBack.setVisibility(View.VISIBLE);
         btnBack.setOnClickListener(v -> finish());
 
         btnConnect.setOnClickListener(v -> performSearch());
+        btnDownload.setOnClickListener(v -> performDownloadSelected());
+
+        cbSelectAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            for (CheckBox cb : idCheckboxes) {
+                cb.setChecked(isChecked);
+            }
+        });
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
@@ -157,61 +183,52 @@ public class SearchActivity extends AppCompatActivity {
                 String r20 = res2.length() > 0 ? res2.getString(0) : "-1";
                 String r21 = res2.length() > 1 ? res2.getString(1) : "-1";
 
-                int[] ids = performPostProcessing(storagePath, 100000, r10, r11, r20, r21);
-
-                // 4. Download and Decrypt matched files
-                File internalBase = getFilesDir();
-                File downloadDir = new File(internalBase, "downloads");
-                File decryptedDir = new File(Environment.getExternalStorageDirectory(), "PI_SearchResults");
-                
-                if (!downloadDir.exists()) downloadDir.mkdirs();
-                if (!decryptedDir.exists()) decryptedDir.mkdirs();
-
-                for (int id : ids) {
-                    String fileId = "ID" + id;
-                    String downloadUrl = "http://" + ip + ":3000/api/download-file?dbName=" + dbName + "&fileId=" + fileId;
-                    
-                    Log.i("PI_SEARCH", "Downloading " + fileId);
-                    // downloadFile now returns the actual filename from the server (e.g. ID0.pdf)
-                    String downloadedFileName = NetworkUtils.downloadFile(downloadUrl, downloadDir.getAbsolutePath(), token);
-                    
-                    File encFile = new File(downloadDir, downloadedFileName);
-                    File decFile = new File(decryptedDir, downloadedFileName);
-
-                    Log.i("PI_SEARCH", "Decrypting " + downloadedFileName);
-                    boolean success = decryptResultFile(storagePath, encFile.getAbsolutePath(), decFile.getAbsolutePath());
-                    if (success) {
-                        Log.i("PI_SEARCH", "Successfully decrypted " + downloadedFileName + " to " + decFile.getAbsolutePath());
-                    } else {
-                        Log.e("PI_SEARCH", "Failed to decrypt " + downloadedFileName);
-                    }
-                }
+                currentMatchedIds = performPostProcessing(storagePath, 100000, r10, r11, r20, r21);
 
                 handler.post(() -> {
-                    if (ids.length == 0) {
+                    llResults.removeAllViews();
+                    selectedIds.clear();
+                    idCheckboxes.clear();
+                    fileItemViews.clear();
+                    cbSelectAll.setChecked(false);
+                    updateSelectionCounter();
+
+                    if (currentMatchedIds.length == 0) {
                         Toast.makeText(this, "No matching records found.", Toast.LENGTH_LONG).show();
                         tvResultsTitle.setVisibility(View.GONE);
                         svResults.setVisibility(View.GONE);
+                        btnDownload.setVisibility(View.GONE);
                     } else {
-                        Toast.makeText(this, "Found " + ids.length + " matching IDs! Files saved in: " + decryptedDir.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Found " + currentMatchedIds.length + " matching IDs!", Toast.LENGTH_SHORT).show();
                         
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Files recovered to: ").append(decryptedDir.getAbsolutePath()).append("\n\n");
-                        for (int i = 0; i < ids.length; i++) {
-                            sb.append("ID").append(ids[i]);
-                            if (i < ids.length - 1) {
-                                sb.append(", ");
-                            }
-                            if ((i + 1) % 5 == 0) {
-                                sb.append("\n");
-                            }
+                        LayoutInflater inflater = LayoutInflater.from(this);
+                        for (int id : currentMatchedIds) {
+                            View itemView = inflater.inflate(R.layout.item_file_download, llResults, false);
+                            
+                            CheckBox cb = itemView.findViewById(R.id.cbFile);
+                            TextView tvName = itemView.findViewById(R.id.tvFileName);
+                            TextView tvStatus = itemView.findViewById(R.id.tvStatus);
+                            
+                            tvName.setText("File ID: " + id);
+                            tvStatus.setText("Ready to download");
+                            
+                            cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                                if (isChecked) {
+                                    if (!selectedIds.contains(id)) selectedIds.add(id);
+                                } else {
+                                    selectedIds.remove(Integer.valueOf(id));
+                                }
+                                updateSelectionCounter();
+                            });
+                            
+                            llResults.addView(itemView);
+                            idCheckboxes.add(cb);
+                            fileItemViews.put(id, itemView);
                         }
                         
-                        tvResults.setText(sb.toString());
                         tvResultsTitle.setVisibility(View.VISIBLE);
                         svResults.setVisibility(View.VISIBLE);
-                        
-                        Log.i("PI_SEARCH", "Matched IDs: " + sb.toString());
+                        btnDownload.setVisibility(View.VISIBLE);
                     }
                 });
 
@@ -220,6 +237,107 @@ public class SearchActivity extends AppCompatActivity {
                 handler.post(() -> Toast.makeText(this, "Search failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
             }
         });
+    }
+
+    private void performDownloadSelected() {
+        if (selectedIds.isEmpty()) {
+            Toast.makeText(this, "Please select at least one file to download", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String dbName = actvSpaceSelector.getText().toString();
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String token = prefs.getString("auth_token", null);
+        String ip = prefs.getString("last_ip", BuildConfig.SERVER_IP);
+
+        Toast.makeText(this, "Downloading " + selectedIds.size() + " files...", Toast.LENGTH_SHORT).show();
+        btnDownload.setEnabled(false);
+        btnDownload.setText("DOWNLOADING...");
+
+        executor.execute(() -> {
+            try {
+                String storagePath = getDbStoragePath(dbName);
+                File internalBase = getFilesDir();
+                File downloadDir = new File(internalBase, "downloads");
+                File decryptedDir = new File(Environment.getExternalStorageDirectory(), "PI_SearchResults");
+                
+                if (!downloadDir.exists()) downloadDir.mkdirs();
+                if (!decryptedDir.exists()) decryptedDir.mkdirs();
+
+                int successCount = 0;
+                List<Integer> idsToDownload = new ArrayList<>(selectedIds);
+
+                for (int id : idsToDownload) {
+                    View itemView = fileItemViews.get(id);
+                    if (itemView == null) continue;
+
+                    ProgressBar pb = itemView.findViewById(R.id.pbDownload);
+                    TextView tvStatus = itemView.findViewById(R.id.tvStatus);
+                    ImageView ivIcon = itemView.findViewById(R.id.ivStatusIcon);
+
+                    String fileId = "ID" + id;
+                    String downloadUrl = "http://" + ip + ":3000/api/download-file?dbName=" + dbName + "&fileId=" + fileId;
+                    
+                    try {
+                        handler.post(() -> tvStatus.setText("Phase 1: Downloading..."));
+                        
+                        String downloadedFileName = NetworkUtils.downloadFile(downloadUrl, downloadDir.getAbsolutePath(), token, progress -> {
+                            // Phase 1: 0-80%
+                            int scaledProgress = progress * 80 / 100;
+                            handler.post(() -> pb.setProgress(scaledProgress));
+                        });
+                        
+                        handler.post(() -> {
+                            pb.setProgress(85);
+                            tvStatus.setText("Phase 2: Decrypting & Saving...");
+                        });
+
+                        File encFile = new File(downloadDir, downloadedFileName);
+                        File decFile = new File(decryptedDir, downloadedFileName);
+
+                        boolean success = decryptResultFile(storagePath, encFile.getAbsolutePath(), decFile.getAbsolutePath());
+                        if (success) {
+                            successCount++;
+                            encFile.delete(); // Delete encrypted file as requested
+                            handler.post(() -> {
+                                pb.setProgress(100);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    pb.setProgressTintList(ColorStateList.valueOf(0xFF4CAF50)); // Green
+                                }
+                                tvStatus.setText("Completed");
+                                ivIcon.setVisibility(View.VISIBLE);
+                                ivIcon.setOnClickListener(v -> openFile(decFile));
+                            });
+                        } else {
+                            handler.post(() -> tvStatus.setText("Failed: Decryption error"));
+                        }
+                    } catch (Exception e) {
+                        Log.e("PI_SEARCH", "Failed ID" + id + ": " + e.getMessage());
+                        handler.post(() -> tvStatus.setText("Error: " + e.getMessage()));
+                    }
+                }
+
+                int finalSuccessCount = successCount;
+                handler.post(() -> {
+                    btnDownload.setEnabled(true);
+                    btnDownload.setText("DOWNLOAD SELECTED");
+                    Toast.makeText(this, "Successfully downloaded " + finalSuccessCount + " files to PI_SearchResults", Toast.LENGTH_LONG).show();
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                handler.post(() -> {
+                    btnDownload.setEnabled(true);
+                    btnDownload.setText("DOWNLOAD SELECTED");
+                    Toast.makeText(this, "Download failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+            }
+        });
+    }
+
+    private void updateSelectionCounter() {
+        int total = currentMatchedIds != null ? currentMatchedIds.length : 0;
+        tvCounter.setText("Selected: " + selectedIds.size() + " / " + total);
     }
 
     private String getDbStoragePath(String dbName) {
@@ -282,6 +400,20 @@ public class SearchActivity extends AppCompatActivity {
         if (!spaceNames.isEmpty()) {
             com.google.android.material.textfield.TextInputLayout til = findViewById(R.id.tilSpaceSelector);
             til.setHint("Select from " + spaceNames.size() + " spaces");
+        }
+    }
+    private void openFile(File file) {
+        try {
+            Uri uri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file);
+            String extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
+            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(uri, mimeType != null ? mimeType : "*/*");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(intent, "Open file with..."));
+        } catch (Exception e) {
+            Toast.makeText(this, "Could not open file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }

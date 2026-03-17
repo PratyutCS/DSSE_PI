@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:background="@drawable/bg_gradient_main">
 
     <include layout="@layout/toolbar_luxury"/>
@@ -75,7 +77,8 @@
                 android:layout_height="40dp"
                 android:text="+ ADD FILE"
                 android:background="@drawable/bg_button_gold"
-                android:textColor="@android:color/white"
+                app:backgroundTint="@null"
+                android:textColor="@color/black"
                 android:textSize="12sp"
                 android:fontFamily="sans-serif-black"
                 android:paddingStart="16dp"
@@ -134,7 +137,8 @@
             android:layout_height="60dp"
             android:text="PERFORM UPDATE"
             android:background="@drawable/bg_button_gold"
-            android:textColor="@android:color/white"
+            app:backgroundTint="@null"
+            android:textColor="@color/black"
             android:fontFamily="sans-serif-black"
             android:textSize="14sp"
             android:letterSpacing="0.1"

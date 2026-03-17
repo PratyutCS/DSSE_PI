@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:background="@drawable/bg_gradient_main">
 
     <include layout="@layout/toolbar_luxury"/>
@@ -138,8 +140,9 @@
             android:layout_height="56dp"
             android:layout_marginHorizontal="20dp"
             android:text="Logout"
-            android:textColor="@color/luxury_gold"
-            android:background="@drawable/bg_button_outline"
+            android:textColor="@color/black"
+            android:background="@drawable/bg_button_gold"
+            app:backgroundTint="@null"
             android:layout_marginTop="48dp"
             android:textAllCaps="true"
             android:textStyle="bold"/>

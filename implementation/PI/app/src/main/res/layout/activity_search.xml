@@ -1,142 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:background="@drawable/bg_gradient_main">
 
     <include layout="@layout/toolbar_luxury"/>
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:padding="24dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select a secure space to connect"
-            android:textColor="@color/text_dim"
-            android:textSize="14sp"
-            android:layout_marginTop="48dp"
-            android:layout_marginBottom="16dp"/>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilSpaceSelector"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Select Space"
-            android:textColorHint="@color/text_dim"
-            app:hintTextColor="@color/luxury_gold"
-            app:boxStrokeColor="@color/luxury_gold"
-            app:endIconTint="@color/luxury_gold"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
-
-            <AutoCompleteTextView
-                android:id="@+id/actvSpaceSelector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="none"
-                android:textColor="@color/text_light"
-                android:popupBackground="#1E293B"
-                android:dropDownSelector="@drawable/bg_card_luxury"
-                android:background="@drawable/bg_input_field"/>
-
-        </com.google.android.material.textfield.TextInputLayout>
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="24dp">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Param 1"
-                android:textColorHint="@color/text_dim"
-                android:layout_marginEnd="8dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etParam1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLength="6"
-                    android:textColor="@color/text_light"
-                    android:background="@drawable/bg_input_field"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Param 2"
-                android:textColorHint="@color/text_dim"
-                android:layout_marginStart="8dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etParam2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLength="6"
-                    android:textColor="@color/text_light"
-                    android:background="@drawable/bg_input_field"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btnConnect"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="CONNECT"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:background="@drawable/bg_button_gold"
-            android:layout_marginTop="32dp"
-            android:textAllCaps="true"/>
-
-        <TextView
-            android:id="@+id/tvResultsTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MATCHED RECORDS"
-            android:textColor="@color/luxury_gold"
-            android:textStyle="bold"
-            android:layout_marginTop="32dp"
-            android:visibility="gone"/>
-
-        <ScrollView
-            android:id="@+id/svResults"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_card_luxury"
-            android:padding="16dp"
-            android:visibility="gone">
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="16dp">
 
             <TextView
-                android:id="@+id/tvResults"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
+                android:text="Select a secure space to connect"
                 android:textColor="@color/text_light"
                 android:textSize="14sp"
-                android:lineSpacingExtra="4dp"/>
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"/>
 
-        </ScrollView>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilSpaceSelector"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Space"
+                android:textColorHint="@color/text_dim"
+                app:hintTextColor="@color/luxury_gold"
+                app:boxStrokeColor="@color/luxury_gold"
+                app:endIconTint="@color/luxury_gold"
+                xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    </LinearLayout>
+                <AutoCompleteTextView
+                    android:id="@+id/actvSpaceSelector"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:textColor="@color/text_light"
+                    android:popupBackground="#1E293B"
+                    android:dropDownSelector="@drawable/bg_card_luxury"
+                    android:background="@drawable/bg_input_field"/>
 
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Param 1"
+                    android:textColorHint="@color/text_dim"
+                    android:layout_marginEnd="8dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etParam1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="6"
+                        android:textColor="@color/text_light"
+                        android:background="@drawable/bg_input_field"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Param 2"
+                    android:textColorHint="@color/text_dim"
+                    android:layout_marginStart="8dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etParam2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="6"
+                        android:textColor="@color/text_light"
+                        android:background="@drawable/bg_input_field"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnConnect"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="CONNECT"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:background="@drawable/bg_button_gold"
+                app:backgroundTint="@null"
+                android:layout_marginTop="24dp"
+                android:textAllCaps="true"/>
+
+            <TextView
+                android:id="@+id/tvResultsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MATCHED RECORDS"
+                android:textColor="@color/luxury_gold"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"/>
+
+            <LinearLayout
+                android:id="@+id/svResults"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="150dp"
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_card_luxury"
+                android:padding="12dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <CheckBox
+                        android:id="@+id/cbSelectAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Select All"
+                        android:textColor="@color/luxury_gold"
+                        android:buttonTint="@color/luxury_gold"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1"/>
+
+                    <TextView
+                        android:id="@+id/tvCounter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Selected: 0"
+                        android:textColor="@color/luxury_gold"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvResultsSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_light"
+                    android:layout_marginBottom="12dp"
+                    android:visibility="gone"
+                    android:textStyle="italic"/>
+
+                <!-- Fixed height to show ~4 items at a time with internal scrolling -->
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="260dp"
+                    android:fadeScrollbars="false"
+                    android:scrollbarThumbVertical="@color/luxury_gold">
+
+                    <LinearLayout
+                        android:id="@+id/llResults"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                    </LinearLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnDownload"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="DOWNLOAD SELECTED"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:background="@drawable/bg_button_gold"
+                app:backgroundTint="@null"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="24dp"
+                android:visibility="gone"
+                android:textAllCaps="true"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>
